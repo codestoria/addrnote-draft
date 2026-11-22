@@ -171,7 +171,7 @@ The table below is a working taxonomy; it is the operationally useful part.
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **lvalue**  | name of a variable, function, template-parameter object (C++20), or data member; a call returning `T&`; built-in `a = b`, `a += b`, `++a`, `--a`; built-in `*p`; built-in `a[i]` (with array lvalue); `a.m` (with `m` a data member, `a` an lvalue); `p->m`; string literal `"hi"`; cast to `T&`; non-type template parameter of lvalue-reference type                 |
 | **prvalue** | literal (non-string), e.g. `42`, `true`, `nullptr`; a call returning non-reference `T`; built-in `a++`, `a--`; built-in arithmetic, logical, comparison; built-in `&a`; `a.m` / `p->m` where `m` is a member enumerator or non-static member function; cast to non-reference type; `this`; enumerator; non-type template parameter of scalar type; lambda expressions   |
-| **xvalue**  | `a.m` where `a` is an rvalue and `m` is a non-static **non-reference** data member; `a.*mp` where `a` is rvalue and `mp` points to data member; call returning `T&&` (e.g. `std::move(x)`); built-in `a[n]` where `a` is an array rvalue; cast to `T&&`; any expression designating a temporary after temporary materialization (C++17); move-eligible expression (C++23) |
+| **xvalue**  | `a.m` where `a` is an rvalue and `m` is a non-static **non-reference** data member; `a.*mp` where `a` is rvalue and `mp` points to data member; call returning `T&&` (e.g. `std::move(x)`); built-in `a[n]` where `a` is an array rvalue; cast to `T&&`; any expression designating a temporary after temporary materialization (C++17); move-eligible expression (C++23; treated as xvalue in specific contexts) |
 
 ### Properties of the two umbrella categories
 
@@ -406,7 +406,7 @@ int&& r = std::move(a);  // OK: r binds to the object a, not to a temporary
 ### Pitfall 5 — "rvalues cannot appear on the left"
 
 ::: warning Careful — that rule is narrower than it looks
-That rule is about **built-in assignment operators**. A class type may overload `operator=` to accept an rvalue `this` — an rvalue-qualified member function — or the compiler may generate an implicit move-assignment that behaves differently from the copy version. The spec's phrase "the built-in assignment operator" is important.
+That rule is about **built-in assignment operators**. A class type may overload `operator=` as an rvalue-qualified member function (callable on an rvalue `*this`) — or the compiler may generate an implicit move-assignment that behaves differently from the copy version. The spec's phrase "the built-in assignment operator" is important.
 :::
 
 ### Pitfall 6 — "a prvalue has a result object only in some cases"
@@ -542,31 +542,31 @@ For `probe(std::move(a))` (an xvalue) and `probe(42)` (a prvalue), `T&` cannot b
 - Every C++ expression has a **type** and a **value category**; these are independent. The category is one of `lvalue`, `prvalue`, `xvalue`.
 - **lvalue** = has identity, is not a movable resource. (Examples: named variables, `*p`, `a[i]` with array lvalue, `++a`, string literals, built-in assignment result.)
 - **prvalue** = pure value, no identity. (Examples: `42`, `a++`, arithmetic results, `&a`, most function calls returning non-reference types.)
-- **xvalue** = has identity **and** is about to be discarded. (Examples: `std::move(x)`, `static_cast<T&&>(x)`, member access on an rvalue, casts to rvalue reference.)
+- **xvalue** = has identity **and** may be treated as reusable / discardable. (Examples: `std::move(x)`, `static_cast<T&&>(x)`, member access on an rvalue, casts to rvalue reference.)
 - Umbrella terms: **glvalue** = lvalue ∪ xvalue (has identity, may be polymorphic); **rvalue** = prvalue ∪ xvalue (binds to `T&&`, cannot be assigned to via built-in `=`).
 - The names are historical, not semantic. **The name of an rvalue reference is an lvalue.** `decltype((e))` encodes the category as `T&`, `T&&`, or `T`.
 - The category governs **overload resolution** (rvalue vs lvalue overloads), **lifetime extension** (`const T&` / `T&&` binding to rvalues), and **`decltype`** results. It is the engine behind move semantics and perfect forwarding.
 
 ## Quick Reference
 
-| Expression                                          | Category | Can take `&`? | Left of built-in `=`?      |
-| --------------------------------------------------- | -------- | ------------- | -------------------------- |
-| `x` (variable name)                                 | lvalue   | ✅            | ✅ (if modifiable)         |
-| `*p`                                                | lvalue   | ✅            | ✅                         |
-| `a[i]` (array lvalue)                               | lvalue   | ✅            | ✅                         |
-| `++x`                                               | lvalue   | ✅            | ✅                         |
-| `x++`                                               | prvalue  | ❌            | ❌                         |
-| `42`                                                | prvalue  | ❌            | ❌                         |
-| `x + y`                                             | prvalue  | ❌            | ❌                         |
-| `&x`                                                | prvalue  | ❌            | ❌                         |
-| `"text"`                                            | lvalue   | ✅            | ❌ (array, not assignable) |
-| `std::move(x)`                                      | xvalue   | ❌            | ❌                         |
-| `static_cast<T&&>(x)`                               | xvalue   | ❌            | ❌                         |
-| `a.m` (an lvalue, m data member)                    | lvalue   | ✅            | ✅                         |
-| `a.m` (an rvalue, m non-reference data member)      | xvalue   | ❌            | ❌                         |
-| `a.m` (m member function)                           | prvalue  | ❌            | ❌                         |
-| `a ? b : c` (both lvalues)                          | lvalue   | ✅            | ✅                         |
-| `a ? b : c` (one lvalue, one prvalue)               | prvalue  | ❌            | ❌                         |
-| `(a, b)` (b lvalue)                                 | lvalue   | ✅            | ✅                         |
-| `(a, b)` (b prvalue)                                | prvalue  | ❌            | ❌                         |
-| `(a, b)` (b xvalue)                                 | xvalue   | ❌            | ❌                         |
+| Expression                                                   | Category | Can take `&`? | Left of built-in `=`?      |
+| ------------------------------------------------------------ | -------- | ------------- | -------------------------- |
+| `x` (variable name)                                          | lvalue   | ✅            | ✅ (if modifiable)         |
+| `*p`                                                         | lvalue   | ✅            | ✅                         |
+| `a[i]` (array lvalue)                                        | lvalue   | ✅            | ✅                         |
+| `++x`                                                        | lvalue   | ✅            | ✅                         |
+| `x++`                                                        | prvalue  | ❌            | ❌                         |
+| `42`                                                         | prvalue  | ❌            | ❌                         |
+| `x + y`                                                      | prvalue  | ❌            | ❌                         |
+| `&x`                                                         | prvalue  | ❌            | ❌                         |
+| `"text"`                                                     | lvalue   | ✅            | ❌ (array, not assignable) |
+| `std::move(x)`                                               | xvalue   | ❌            | ❌                         |
+| `static_cast<T&&>(x)`                                        | xvalue   | ❌            | ❌                         |
+| `a.m` (an lvalue, m non-static data member)                  | lvalue   | ✅            | ✅                         |
+| `a.m` (an rvalue, m non-static non-reference data member)    | xvalue   | ❌            | ❌                         |
+| `a.m` (m member function)                                    | prvalue  | ❌            | ❌                         |
+| `a ? b : c` (both lvalues)                                   | lvalue   | ✅            | ✅                         |
+| `a ? b : c` (one lvalue, one prvalue)                        | prvalue  | ❌            | ❌                         |
+| `(a, b)` (b lvalue)                                          | lvalue   | ✅            | ✅                         |
+| `(a, b)` (b prvalue)                                         | prvalue  | ❌            | ❌                         |
+| `(a, b)` (b xvalue)                                          | xvalue   | ❌            | ❌                         |
