@@ -440,6 +440,6 @@ decltype((cr)) v5 = cx;
 
 | Qualifier Kind | Example | What is `const`? | Preserved on Pass-by-Value / `auto`? |
 | --- | --- | --- | --- |
-| **Top-level `const**` | `const int x`, `int* const p` | The variable or pointer itself | ❌ Stripped (copying does not mutate original) |
-| **Low-level `const**` | `const int* p`, `const int& r` | The pointed-to or referenced object | ✅ Preserved (stripping would allow illegal mutation) |
+| **Top-level `const`** | `const int x`, `int* const p` | The variable or pointer itself | ❌ Stripped (copying does not mutate original) |
+| **Low-level `const`** | `const int* p`, `const int& r` | The pointed-to or referenced object | ✅ Preserved (stripping would allow illegal mutation) |
 | **Both** | `const int* const p` | Both the pointer and the target | Top-level stripped, low-level preserved $\rightarrow$ `const int*` |
