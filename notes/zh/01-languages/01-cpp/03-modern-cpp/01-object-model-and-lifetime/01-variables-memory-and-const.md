@@ -24,8 +24,8 @@ x = 2;  // Compiler error: cannot assign to variable 'x' with const-qualified ty
 
 int y = 20;
 const int* p = &x;
-*p = 5;    // Compiler error: read-only variable is not assignable
-p = &y;    // Compiles! Why is p allowed to point somewhere else?
+*p = 5;  // Compiler error: read-only variable is not assignable
+p = &y;  // Compiles! Why is p allowed to point somewhere else?
 ```
 
 At first glance, that looks contradictory. Why can `x` not be reassigned, why can `*p` not be modified, and yet `p = &y;` is completely fine?
@@ -245,15 +245,15 @@ int main() {
 
     // 2. Top-level const: cannot change pTop, can change *pTop
     int* const pTop = &a;
-    *pTop = 99;     // OK: a is modified through pTop
+    *pTop = 99;    // OK: a is modified through pTop
     std::cout << "a is now " << a << "\n";
-    // pTop = &b;   // Error: pTop itself is const
+    // pTop = &b;  // Error: pTop itself is const
 
     // 3. Both low-level and top-level const
     const int* const pBoth = &a;
     std::cout << "*pBoth = " << *pBoth << "\n";
-    // *pBoth = 50; // Error
-    // pBoth = &b;  // Error
+    // *pBoth = 50;  // Error
+    // pBoth = &b;   // Error
 }
 ```
 
@@ -343,12 +343,12 @@ int a = 3;
 int b = 4;
 
 const int* p1 = &a;
-*p1 = 10;     // (1)
-p1 = &b;      // (2)
+*p1 = 10;  // (1)
+p1 = &b;   // (2)
 
 int* const p2 = &a;
-*p2 = 10;     // (3)
-p2 = &b;      // (4)
+*p2 = 10;  // (3)
+p2 = &b;   // (4)
 ```
 
 **Exercise 2.** What does the following program print?
