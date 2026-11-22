@@ -25,14 +25,14 @@
     "@types/node": "^22.10.2",
     "chokidar": "^4.0.3",
     "gray-matter": "^4.0.3",
-    "mermaid": "^11.17.2",
+    "mermaid": "^12.3.0",
     "prettier": "^3.10.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitepress": "^1.6.4",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vue": "^3.5.46",
-    "vue-tsc": "^2.2.12"
+    "vue-tsc": "^3.3.14"
   },
   "engines": {
     "node": ">=22"
