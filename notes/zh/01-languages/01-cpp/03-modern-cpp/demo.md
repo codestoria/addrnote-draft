@@ -1,8 +1,8 @@
 ---
-title: 现代C++示例
-description: 用于验证章节侧边栏的占位文档
+title: Modern C++ Demo
+description: A placeholder document for chapter sidebar verification
 ---
 
-# 现代C++示例
+# Modern C++ Demo
 
-这是一篇用于验证现代 C++ 章节导航的占位文档。
+This placeholder verifies navigation within the Modern C++ chapter.

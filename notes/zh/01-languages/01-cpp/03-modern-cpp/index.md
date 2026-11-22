@@ -1,8 +1,8 @@
 ---
-title: 现代C++
-description: 现代 C++ 特性概述
+title: Modern C++
+description: An overview of modern C++ features
 ---
 
-# 现代C++
+# Modern C++
 
-记录现代 C++ 标准、资源管理、泛型编程与并发相关知识。
+Notes on modern standards, resource management, generic programming, and concurrency.
