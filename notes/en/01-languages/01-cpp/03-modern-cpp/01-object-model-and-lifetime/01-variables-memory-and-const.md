@@ -94,14 +94,13 @@ flowchart LR
 
     I["int, double, array, struct, pointer"] --> O
 
-    classDef entity fill:#e8f4fd
-    classDef obj fill:#fff2dd
-    classDef other fill:#f5f5f5,color:#333
+    classDef entity fill:#e8f4fd,stroke:#4a90e2,color:#111
+    classDef objectNode fill:#fff2dd,stroke:#d9822b,color:#111
+    classDef otherNode fill:#f5f5f5,stroke:#888,color:#333
 
     class E entity
-    class O obj
-    class I obj
-    class F,R other
+    class O,I objectNode
+    class F,R otherNode
 ```
 
 ### Analogy — and where it breaks
@@ -141,7 +140,7 @@ A classic reading rule helps: **read a type declaration from right to left**, st
 
 ### How C++ models storage, types, and `const`
 
-1. **Storage duration & layout:** An object occupies contiguous bytes of storage with a determined size (`sizeof(T)`) and alignment requirement (`alignof(T)`). The address of an object can be obtained with the address-of operator `&` (for addressable objects).
+1. **Storage duration & layout:** An object occupies contiguous bytes of storage with a determined size (`sizeof(T)`) and alignment requirement (`alignof(T)`). For most objects, you can obtain their address with the address-of operator `&` (exceptions include bit-fields and temporary values/prvalues).
 2. **Type qualifiers:** `const` is a type qualifier. Adding `const` to a type produces a `const`-qualified version of that type, restricting operations that mutate values through that qualified type.
 3. **Pointer declarator rules:** In a pointer declarator, `const` before `*` modifies the pointee type (low-level relative to the pointer), whereas `const` after `*` modifies the pointer itself (top-level on that pointer).
 4. **Implicit conversion to `const`:** In C++, you can implicitly convert a non-`const` pointer to a pointer to `const` (for example, `int*` to `const int*`), adding `const` protection. The reverse — implicitly converting `const int*` to `int*` — is forbidden because it would silently drop `const` protection.
@@ -189,7 +188,6 @@ Let's walk through a small, self-contained program that inspects sizes, addresse
 ### Step 1 — inspect size, alignment, and address of a variable
 
 ```cpp
-#include <cstddef>
 #include <iostream>
 
 int main() {
