@@ -108,7 +108,7 @@ The intersection is `{xvalue}`; the union is all expressions.
 **"Lvalue"** originally meant "may appear on the left of an assignment". **"Rvalue"** originally meant "may appear on the right of an assignment". Both are approximations. In modern C++:
 
 - `const int& c = ...; c = 6;` — `c` is an **lvalue**, but cannot be assigned to.
-- `S{} = S{7};` — `S{}` is a **prvalue**, but _can_ appear on the left of `=` in an expression statement (assignment to a temporary is legal; it just has no lasting effect).
+- `S{} = S{7};` — `S{}` is a **prvalue**, but this is legal because it invokes a user-defined `operator=` member function, not the built-in assignment operator. Built-in assignment still requires its left operand to be a modifiable lvalue.
 
 The assignment-position mnemonic is useful for intuition, never for formal reasoning.
 :::
@@ -136,7 +136,7 @@ Value categories serve overload resolution and lifetime rules:
 - `T&&` binds to rvalues (prvalues and xvalues), enabling **move semantics**.
 - `const T&` binds to lvalues _and_ rvalues, but cannot be moved from.
 - `T&` binds only to lvalues — this is why some functions reject temporaries.
-- `decltype((expr))` returns `T&` for lvalues, `T&&` for xvalues, and `T` for prvalues. This is exactly how `std::forward` distinguishes forwarding cases.
+- `decltype((expr))` returns `T&` for lvalues, `T&&` for xvalues, and `T` for prvalues. This classification aligns with the logic `std::forward` uses to preserve the original value category.
 
 ## Formal Definition / Mechanism
 
@@ -145,7 +145,7 @@ Value categories serve overload resolution and lifetime rules:
 From the C++ standard (paraphrased in full):
 
 1. Every expression has a **non-reference type** and belongs to exactly one of `{lvalue, xvalue, prvalue}`.
-2. A **glvalue** is an expression whose evaluation determines the identity of an object or function. Equivalent to "`lvalue` or `xvalue`".
+2. A **glvalue** is an expression whose evaluation determines the identity of an object, bit-field, or function. Equivalent to "`lvalue` or `xvalue`".
 3. A **prvalue** is an expression whose evaluation either (a) computes the value of an operand of a built-in operator (no result object), or (b) initializes an object (a _result object_: a variable, a heap object, a temporary, or a member thereof).
 4. An **xvalue** is a glvalue denoting an object whose resources can be reused.
 5. An **lvalue** is a glvalue that is not an xvalue.
@@ -165,7 +165,7 @@ The table below is a working taxonomy; it is the operationally useful part.
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **lvalue**  | name of a variable, function, template-parameter object (C++20), or data member; a call returning `T&`; built-in `a = b`, `a += b`, `++a`, `--a`; built-in `*p`; built-in `a[i]` (with array lvalue); `a.m` (with `m` a data member, `a` an lvalue); `p->m`; string literal `"hi"`; cast to `T&`; non-type template parameter of lvalue-reference type                 |
 | **prvalue** | literal (non-string), e.g. `42`, `true`, `nullptr`; a call returning non-reference `T`; built-in `a++`, `a--`; built-in arithmetic, logical, comparison; built-in `&a`; `a.m` / `p->m` where `m` is a member enumerator or non-static member function; cast to non-reference type; `this`; enumerator; non-type template parameter of scalar type; lambda expressions   |
-| **xvalue**  | `a.m` where `a` is an rvalue and `m` is a non-static data member of object type; `a.*mp` where `a` is rvalue and `mp` points to data member; call returning `T&&` (e.g. `std::move(x)`); built-in `a[n]` where `a` is an array rvalue; cast to `T&&`; any expression designating a temporary after temporary materialization (C++17); move-eligible expression (C++23) |
+| **xvalue**  | `a.m` where `a` is an rvalue and `m` is a non-static **non-reference** data member; `a.*mp` where `a` is rvalue and `mp` points to data member; call returning `T&&` (e.g. `std::move(x)`); built-in `a[n]` where `a` is an array rvalue; cast to `T&&`; any expression designating a temporary after temporary materialization (C++17); move-eligible expression (C++23) |
 
 ### Properties of the two umbrella categories
 
@@ -267,6 +267,10 @@ The standard trick to test categories is pattern-matching on these types:
 ```cpp
 #include <type_traits>
 #include <utility>
+
+// These helpers are ONLY designed to work with decltype((expr)).
+// They rely on the rule: lvalue → T&, xvalue → T&&, prvalue → T.
+// Do NOT pass raw decltype(expr) into them.
 
 template <class T> struct is_prvalue : std::true_type  {};
 template <class T> struct is_prvalue<T&>  : std::false_type {};
