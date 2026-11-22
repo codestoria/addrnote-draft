@@ -108,7 +108,7 @@ The intersection is `{xvalue}`; the union is all expressions.
 **"Lvalue"** originally meant "may appear on the left of an assignment". **"Rvalue"** originally meant "may appear on the right of an assignment". Both are approximations. In modern C++:
 
 - `const int& c = ...; c = 6;` — `c` is an **lvalue**, but cannot be assigned to.
-- `S{} = S{7};` — `S{}` is a **prvalue**, but this is legal because it invokes a user-defined `operator=` member function, not the built-in assignment operator. Built-in assignment still requires its left operand to be a modifiable lvalue.
+- `S{} = S{7};` — `S{}` is a **prvalue**, but this is legal because it invokes a class-type `operator=` member function (possibly implicitly generated), not the built-in assignment operator. Built-in assignment still requires its left operand to be a modifiable lvalue.
 
 The assignment-position mnemonic is useful for intuition, never for formal reasoning.
 :::
@@ -412,7 +412,7 @@ That rule is about **built-in assignment operators**. A class type may overload 
 ### Pitfall 6 — "a prvalue has a result object only in some cases"
 
 ::: warning Subtle wording
-For built-in operators, a prvalue may compute a value with **no result object** (`42 + 1` — the `int` result does not exist as an object). For class and array prvalues, C++17 guarantees a **result object** — even when immediately discarded, the temporary is materialized so that `decltype` and destructor ordering work out.
+For built-in operators, a prvalue may compute a value with **no result object** (`42 + 1` — the `int` result does not exist as an object). For class and array prvalues, C++17 guarantees a **result object**; when the prvalue is used in a context that needs an object (binding to a reference, member access, or a discarded-value expression), the result object is **materialized** so that lifetime and destructor ordering work out. Unevaluated operands such as `decltype` and `sizeof` do **not** materialize it.
 :::
 
 ### Pitfall 7 — "`std::move` moves"
@@ -438,10 +438,10 @@ static_assert(std::is_same_v<decltype(static_cast<const S>(S{})), const S>);
 ```
 :::
 
-### Pitfall 9 — "every class prvalue has a result object"
+### Pitfall 9 — "a class prvalue always creates a temporary object"
 
-::: warning True since C++17 — with one exception
-When the prvalue is the operand of `decltype`, no result object is created — `decltype` only cares about the type, not the object. This is the only place where a class prvalue has no result object.
+::: warning Distinguish "result object" from "materialized temporary"
+Since C++17, a class or array prvalue has an associated **result object**, but that does not mean a temporary object is always created. In unevaluated operands such as `decltype(S{})`, `sizeof(S{})`, and `noexcept(...)`, the prvalue is **not materialized**, so no temporary object is created. `decltype` only inspects the type and value category; it never evaluates the expression. So the claim "every class prvalue creates a temporary" is false.
 :::
 
 ## Practice Check
@@ -562,8 +562,8 @@ For `probe(std::move(a))` (an xvalue) and `probe(42)` (a prvalue), `T&` cannot b
 | `"text"`                                            | lvalue   | ✅            | ❌ (array, not assignable) |
 | `std::move(x)`                                      | xvalue   | ❌            | ❌                         |
 | `static_cast<T&&>(x)`                               | xvalue   | ❌            | ❌                         |
-| `a.m` (a lvalue, m data member)                     | lvalue   | ✅            | ✅                         |
-| `a.m` (a rvalue, m non-reference data member)       | xvalue   | ❌            | ❌                         |
+| `a.m` (an lvalue, m data member)                    | lvalue   | ✅            | ✅                         |
+| `a.m` (an rvalue, m non-reference data member)      | xvalue   | ❌            | ❌                         |
 | `a.m` (m member function)                           | prvalue  | ❌            | ❌                         |
 | `a ? b : c` (both lvalues)                          | lvalue   | ✅            | ✅                         |
 | `a ? b : c` (one lvalue, one prvalue)               | prvalue  | ❌            | ❌                         |
