@@ -186,7 +186,7 @@ The table below is a working taxonomy; it is the operationally useful part.
 
 - **Cannot** have its address taken by the built-in `&`: `&42`, `&int()`, `&i++`, `&std::move(x)` are all ill-formed.
 - **Cannot** be used as the left-hand operand of a built-in assignment or compound assignment operator.
-- May initialize a `const T&` — the temporary's lifetime extends to the reference's scope.
+- May initialize a `const T&`; if the rvalue denotes a temporary object, its lifetime extends to the reference's scope.
 - May initialize a `T&&` — same lifetime extension.
 - Binds preferentially to a `T&&` parameter over `const T&` when both overloads exist — this is the mechanism behind move construction.
 :::
@@ -564,7 +564,7 @@ For `probe(std::move(a))` (an xvalue) and `probe(42)` (a prvalue), `T&` cannot b
 | `static_cast<T&&>(x)`                                        | xvalue   | ❌            | ❌                         |
 | `a.m` (an lvalue, m non-static data member)                  | lvalue   | ✅            | ✅                         |
 | `a.m` (an rvalue, m non-static non-reference data member)    | xvalue   | ❌            | ❌                         |
-| `a.m` (m member function)                                    | prvalue  | ❌            | ❌                         |
+| `a.m` (m non-static member function)                         | prvalue  | ❌            | ❌                         |
 | `a ? b : c` (both lvalues)                                   | lvalue   | ✅            | ✅                         |
 | `a ? b : c` (one lvalue, one prvalue)                        | prvalue  | ❌            | ❌                         |
 | `(a, b)` (b lvalue)                                          | lvalue   | ✅            | ✅                         |
