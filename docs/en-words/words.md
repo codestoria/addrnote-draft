@@ -51,7 +51,11 @@
 
 
 
-
+### in its own right
+> 短语
+> 释义：凭自身本身；独立地；本身（不依附、不靠沾光）
+- This library is powerful in its own right.
+  这个库本身就很强。
 
 
 
