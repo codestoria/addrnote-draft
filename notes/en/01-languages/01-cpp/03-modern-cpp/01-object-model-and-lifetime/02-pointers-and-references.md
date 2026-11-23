@@ -145,8 +145,8 @@ Three core rules govern reference binding:
 1. **Mandatory initialization:** A reference must be initialized when defined (including via function call arguments, constructor member initializer lists, or `extern` declarations).
 2. **Permanent binding (no reseating):** Once bound, `ref` can never be redirected to another object. Any assignment `ref = other;` invokes the assignment operator on the underlying `T` object.
 3. **`const` binding rules:**
-* A non-const lvalue reference (`T&`) can bind **only** to a modifiable lvalue of type `T`. It cannot bind to a `const T` or to a temporary value (rvalue), because allowing a non-const reference to mutate a temporary or a `const` object would break type safety.
-* A `const` lvalue reference (`const T&`) can bind to modifiable lvalues, `const` lvalues, **and** temporary values (rvalues). When bound directly to a temporary, `const T&` extends that temporary's lifetime to match the lifetime of the reference (with important caveats noted in Pitfall 2).
+   * A non-const lvalue reference (`T&`) can bind **only** to a modifiable lvalue of type `T`. It cannot bind to a `const T` or to a temporary value (rvalue), because allowing a non-const reference to mutate a temporary or a `const` object would break type safety.
+   * A `const` lvalue reference (`const T&`) can bind to modifiable lvalues, `const` lvalues, **and** temporary values (rvalues). When bound directly to a temporary, `const T&` extends that temporary's lifetime to match the lifetime of the reference (with important caveats noted in Pitfall 2).
 
 ### Parameter passing: value vs. `T&` vs. `const T&`
 
@@ -354,7 +354,6 @@ Array-to-pointer decay does **not** occur when an array is the operand of `sizeo
 ### Pitfall 1 — Returning a reference or pointer to a local variable
 
 ::: danger Undefined behavior (dangling reference / dangling pointer)
-
 ```cpp
 int& bad_ref() {
     int local = 10;
@@ -390,7 +389,6 @@ By the time `dangling` is used on the next line, the temporary `std::string` has
 ### Pitfall 3 — Leaving raw pointers uninitialized
 
 ::: danger Undefined behavior on dereference
-
 ```cpp
 int* p;   // Uninitialized: holds an indeterminate address
 *p = 42;  // Undefined behavior (often a segmentation fault or silent corruption)
@@ -487,7 +485,6 @@ double* ptr = arr;
 ### Solutions
 
 ::: details Exercise 1 — output of the snippet
-
 Output:
 
 ```text
@@ -500,7 +497,6 @@ Output:
 :::
 
 ::: details Exercise 2 — compilation and explanation
-
 * **(1) Compiles:** `const std::string&` can bind to a non-const lvalue (`text`).
 * **(2) Compiles:** `const std::string&` can bind to a `const` lvalue (`ctext`).
 * **(3) Compiles:** `"literal"` implicitly constructs a temporary `std::string`, and `const std::string&` can bind to temporaries (rvalues).
@@ -510,7 +506,6 @@ Output:
 :::
 
 ::: details Exercise 3 — sizes of array, reference, and pointer
-
 * `sizeof(arr)` is `40` (`5 * sizeof(double)` = `5 * 8` bytes; `sizeof` does not trigger array decay).
 * `sizeof(ref)` is `8` (`ref` is an alias for `arr[0]` of type `double`, so `sizeof(ref)` equals `sizeof(double)`).
 * `sizeof(ptr)` is `8` (`arr` decayed to `double*`, and a 64-bit pointer occupies `8` bytes).
