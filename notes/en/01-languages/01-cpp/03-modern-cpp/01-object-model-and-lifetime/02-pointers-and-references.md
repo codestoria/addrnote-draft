@@ -401,7 +401,6 @@ Always initialize every pointer either to a valid object's address (`&x`) or exp
 ### Pitfall 4 — Thinking `ref = other;` rebinds a reference
 
 ::: danger False
-
 ```cpp
 int x = 1;
 int y = 2;
@@ -415,7 +414,6 @@ Once initialized, a reference is permanently bound to `x`. Writing `ref = y;` pe
 ### Pitfall 5 — Passing a temporary to a non-const lvalue reference (`T&`)
 
 ::: warning Compiler error
-
 ```cpp
 void increment(int& x) { ++x; }
 
