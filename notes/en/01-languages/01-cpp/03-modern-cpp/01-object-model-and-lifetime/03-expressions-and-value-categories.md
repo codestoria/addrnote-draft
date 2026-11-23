@@ -85,15 +85,13 @@ Instead of memorizing dozens of arbitrary rules, ask two straightforward questio
 
 1. **Does `E` have identity?**
 Can you point to a specific, identifiable location in memory (or a specific function) that outlives the immediate subexpression? In practical terms: *if you evaluated `E` twice, would you be referring to the exact same object?*
-* If **Yes**, `E` is a **glvalue** (*generalized lvalue*).
-* If **No**, `E` has no persistent home; it is just a transient result.
-
+   * If **Yes**, `E` is a **glvalue** (*generalized lvalue*).
+   * If **No**, `E` has no persistent home; it is just a transient result.
 
 2. **Can `E`'s resources be reused (i.e., moved from)?**
 Is the object behind `E` either an unnamed temporary or explicitly marked as "about to be discarded", meaning another function is allowed to steal its internal buffers or handles without breaking anything?
-* If **Yes**, `E` is an **rvalue**.
-* If **No**, `E` is actively in use and must not be pilfered.
-
+   * If **Yes**, `E` is an **rvalue**.
+   * If **No**, `E` is actively in use and must not be pilfered.
 
 
 Combining these two yes/no answers yields four logical combinations. C++ uses three of them as its fundamental value categories; the fourth — neither identity nor movability — would be useless, so it does not exist:
@@ -301,7 +299,8 @@ a = 20;  // Error: 'a' IS an lvalue (you can take &a), just non-modifiable.
 int b = a;  // 'a' is on the RIGHT of '=', yet 'a' is still an lvalue!
 ```
 
-Whether an expression is an lvalue depends on whether it designates an **identifiable object**, not where it sits around `=`. When an lvalue appears on the right-hand side of `=`, C++ simply performs an implicit **lvalue-to-rvalue conversion** to read its stored value.
+Whether an expression is an lvalue depends on whether it designates an **identifiable object**, not where it sits around `=`.
+When an lvalue appears on the right-hand side of `=`, C++ simply performs an implicit **lvalue-to-rvalue conversion** to read its stored value.
 :::
 
 ### Pitfall 2 — "A named rvalue reference variable is an rvalue"
@@ -336,7 +335,9 @@ const std::string title = "Engineer";
 std::string other = std::move(title);  // Still COPIES! 'const' blocks moving.
 ```
 
-`std::move(x)` merely converts the expression `x` from an **lvalue** into an **xvalue** — an "eligible to be moved from" tag. Actual resource transfer happens **only if** that xvalue is subsequently passed to a function or constructor that accepts an rvalue reference (such as `std::string(std::string&&)`). If you pass `std::move(title)` where `title` is `const`, `std::move` produces a `const std::string&&`, which cannot bind to a non-const `std::string&&` move constructor, so C++ quietly falls back to `const std::string&` and copies it anyway.
+`std::move(x)` merely converts the expression `x` from an **lvalue** into an **xvalue** — an "eligible to be moved from" tag.
+Actual resource transfer happens **only if** that xvalue is subsequently passed to a function or constructor that accepts an rvalue reference (such as `std::string(std::string&&)`).
+If you pass `std::move(title)` where `title` is `const`, `std::move` produces a `const std::string&&`, which cannot bind to a non-const `std::string&&` move constructor, so C++ quietly falls back to `const std::string&` and copies it anyway.
 :::
 
 ## Practice Check
