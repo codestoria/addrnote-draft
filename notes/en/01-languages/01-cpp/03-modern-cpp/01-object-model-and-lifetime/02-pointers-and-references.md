@@ -539,3 +539,7 @@ Output:
 | `void f(T& x)` | Pass by mutable reference | Zero-copy in-place modification; requires a non-const lvalue |
 | `void f(T* p)` | Pass by pointer | Allows `nullptr` (optional target) or pointer arithmetic |
 | Array decay (`arr` → `&arr[0]`) | `T[N]` implicitly converts to `T*` | Loses array length `N`; avoided by `sizeof`, `&arr`, or `T (&)[N]` |
+| `int* p[4];` | Array of 4 `int*` pointers | `[]` has higher precedence than `*`; each element is a pointer |
+| `int (*p)[4];` | Pointer to an `int[4]` array | Parentheses bind `*` first; `p` points to a whole 4-element array |
+| `int (&ref)[4];` | Reference bound to an `int[4]` array | Alias for an `int[4]` array; retains length `4` without decay |
+| `int& arr[4];` | Array of references (illegal) | Ill-formed: array elements must be objects, references are not |
