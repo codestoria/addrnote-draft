@@ -136,7 +136,6 @@ Notice that **`xvalue` sits in the overlap**: it has identity like an `lvalue`, 
 ### An everyday analogy — and where it stops
 
 ::: tip A house, a cup of coffee, and an estate sale
-
 * An **lvalue** is **your house**. It has a street address (identity), you can invite guests over (`&house`), and nobody is allowed to haul away your furniture without asking.
 * A **prvalue** is **the aroma of freshly brewed coffee** drifting across the kitchen. You can enjoy it right now (use it to initialize a variable or compute a result), but you cannot mail a letter to the aroma — it has no street address.
 * An **xvalue** is **a house on closing day with an "Everything Must Go" sign**. It still has a street address (identity), so you know exactly which house it is, but the owner has explicitly declared that movers may strip the furniture out of it.
@@ -304,7 +303,6 @@ Whether an expression is an lvalue depends on whether it designates an **identif
 ### Pitfall 2 — "A named rvalue reference variable is an rvalue"
 
 ::: danger False — This is the #1 bug in beginner move-semantics code
-
 ```cpp
 void process(std::string&& s)
 {
@@ -399,7 +397,6 @@ struct User {
 ### Solutions
 
 ::: details Exercise 1 — Answers
-
 | # | Expression | Category | `&expr` compiles? | Reason |
 | --- | --- | --- | --- | --- |
 | 1 | `x` | lvalue | ✅ Yes | Named variable with a persistent memory address. |
@@ -411,11 +408,9 @@ struct User {
 | 7 | `r` | lvalue | ✅ Yes | `r` is a named variable; expressions with names are lvalues. |
 | 8 | `std::move(x)` | xvalue | ❌ No | Cast to `int&&`; has identity (`x`) and is movable (an rvalue). |
 | 9 | `"C++"` | lvalue | ✅ Yes | String literals live in static storage as `const char[4]` arrays. |
-
 :::
 
 ::: details Exercise 2 — Answers
-
 Output:
 
 ```text
@@ -430,7 +425,6 @@ R
 :::
 
 ::: details Exercise 3 — Answers
-
 Inside `User(std::string&& name)`, `name` has a variable name, making the expression `name` an **lvalue**. Writing `: username(name)` invokes `std::string`'s **copy constructor** instead of its move constructor, allocating a brand-new heap buffer even though the caller explicitly passed an rvalue!
 
 Fix: cast `name` back to an xvalue with `std::move`:
@@ -439,7 +433,6 @@ Fix: cast `name` back to an xvalue with `std::move`:
 User(std::string&& name)
     : username(std::move(name)) {}
 ```
-
 :::
 
 ## Summary
