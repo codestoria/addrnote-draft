@@ -42,7 +42,12 @@
 
 
 
-
+### unlearn
+> 英 /ˌʌnˈlɜːn/  美 /ˌʌnˈlɜːrn/
+> v. 摒弃固有认知；破除旧习惯；主动忘掉已习得的内容
+- 区别 from forget：forget 是被动忘记；unlearn 是主动推翻根深蒂固的知识/思维
+- You need to unlearn old patterns before adopting new ones.
+  在接纳新模式之前，你需要摒弃旧套路。
 
 
 
