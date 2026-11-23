@@ -227,31 +227,31 @@ int main()
     int& lref = a;
     int&& rref = 20;  // rref binds to temporary 20, extending its lifetime
 
-    std::cout << "1. Variable a:          ";
+    std::cout << "Variable a:          ";
     inspect(a);
 
-    std::cout << "2. Literal 42:          ";
+    std::cout << "Literal 42:          ";
     inspect(42);
 
-    std::cout << "3. Arithmetic a + 5:    ";
+    std::cout << "Arithmetic a + 5:    ";
     inspect(a + 5);
 
-    std::cout << "4. Prefix ++a:          ";
+    std::cout << "Prefix ++a:          ";
     inspect(++a);
 
-    std::cout << "5. Postfix a++:         ";
+    std::cout << "Postfix a++:         ";
     inspect(a++);
 
-    std::cout << "6. std::move(a):        ";
+    std::cout << "std::move(a):        ";
     inspect(std::move(a));
 
-    std::cout << "7. lvalue ref lref:     ";
+    std::cout << "lvalue ref lref:     ";
     inspect(lref);
 
-    std::cout << "8. Named rvalue rref:   ";
+    std::cout << "Named rvalue rref:   ";
     inspect(rref);  // <-- Watch closely here!
 
-    std::cout << "9. std::move(rref):     ";
+    std::cout << "std::move(rref):     ";
     inspect(std::move(rref));
 
     return 0;
@@ -262,16 +262,16 @@ int main()
 
 Compile with any modern C++ compiler (`g++ -std=c++17 value_categories.cpp -o vc && ./vc`):
 
-```text
-1. Variable a:          [lvalue]  received value = 10
-2. Literal 42:          [rvalue]  received value = 42
-3. Arithmetic a + 5:    [rvalue]  received value = 15
-4. Prefix ++a:          [lvalue]  received value = 11
-5. Postfix a++:         [rvalue]  received value = 11
-6. std::move(a):        [rvalue]  received value = 12
-7. lvalue ref lref:     [lvalue]  received value = 12
-8. Named rvalue rref:   [lvalue]  received value = 20
-9. std::move(rref):     [rvalue]  received value = 20
+```text:line-numbers
+Variable a:          [lvalue]  received value = 10
+Literal 42:          [rvalue]  received value = 42
+Arithmetic a + 5:    [rvalue]  received value = 15
+Prefix ++a:          [lvalue]  received value = 11
+Postfix a++:         [rvalue]  received value = 11
+std::move(a):        [rvalue]  received value = 12
+lvalue ref lref:     [lvalue]  received value = 12
+Named rvalue rref:   [lvalue]  received value = 20
+std::move(rref):     [rvalue]  received value = 20
 ```
 
 **Look closely at lines 4–5 and 8–9:**
