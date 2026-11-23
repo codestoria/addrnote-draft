@@ -7,11 +7,11 @@ outline: deep
 # Expressions and Value Categories: lvalues, prvalues, and xvalues
 
 ::: tip What you'll learn
-* Why every C++ expression carries **two independent attributes**: a **type** and a **value category**
-* How to classify any expression using two simple questions (**identity** and **reusability**)
-* The exact relationships among **lvalues**, **prvalues**, **xvalues**, **glvalues**, and **rvalues**
-* How to observe value categories firsthand using function overload resolution (`f(int&)` vs. `f(int&&)`)
-* How to avoid the most common beginner traps — including why a named rvalue reference is actually an lvalue
+- Why every C++ expression carries **two independent attributes**: a **type** and a **value category**
+- How to classify any expression using two simple questions (**identity** and **reusability**)
+- The exact relationships among **lvalues**, **prvalues**, **xvalues**, **glvalues**, and **rvalues**
+- How to observe value categories firsthand using function overload resolution (`f(int&)` vs. `f(int&&)`)
+- How to avoid the most common beginner traps — including why a named rvalue reference is actually an lvalue
 :::
 
 ## Motivation
@@ -42,11 +42,11 @@ The answer lies in **value categories**. Type alone only tells the compiler *wha
 
 Value categories fill that gap. They govern:
 
-* whether you can take an expression's address (`&expr`),
-* whether an expression can appear on the left-hand side of built-in assignment (`=`),
-* which overloaded function the compiler selects (`f(int&)` vs. `f(int&&)`),
-* when temporary objects get their lifetimes extended, and
-* how modern C++ implements **move semantics** without breaking backward compatibility.
+- whether you can take an expression's address (`&expr`),
+- whether an expression can appear on the left-hand side of built-in assignment (`=`),
+- which overloaded function the compiler selects (`f(int&)` vs. `f(int&&)`),
+- when temporary objects get their lifetimes extended, and
+- how modern C++ implements **move semantics** without breaking backward compatibility.
 
 ::: tip When this matters most
 Understanding compiler errors like *"cannot bind non-const lvalue reference to an rvalue"*, writing or reading modern C++ APIs that accept `T&&`, and knowing when `std::move` actually enables a move versus silently falling back to a copy.
@@ -55,9 +55,9 @@ Understanding compiler errors like *"cannot bind non-const lvalue reference to a
 ::: danger First, unlearn the old classroom slogan
 If you have heard *"lvalues go on the left of `=`, and rvalues go on the right of `=`"*, **forget it right now**. That rule came from 1970s C, and C++ violates it in both directions:
 
-* `const int x = 5;` — `x` is an **lvalue**, yet `x = 10;` is illegal because it is `const` (non-modifiable).
-* `int y = x;` — `x` is an **lvalue**, yet it sits on the **right** of `=` (via lvalue-to-rvalue conversion).
-* `std::string{"hi"} = "bye";` — `std::string{"hi"}` is a **prvalue**, yet calling its non-`const` `operator=` member function on the left of `=` is allowed in C++.
+- `const int x = 5;` — `x` is an **lvalue**, yet `x = 10;` is illegal because it is `const` (non-modifiable).
+- `int y = x;` — `x` is an **lvalue**, yet it sits on the **right** of `=` (via lvalue-to-rvalue conversion).
+- `std::string{"hi"} = "bye";` — `std::string{"hi"}` is a **prvalue**, yet calling its non-`const` `operator=` member function on the left of `=` is allowed in C++.
 
 Position around `=` is a historical accident, not a definition.
 :::
@@ -85,13 +85,12 @@ Instead of memorizing dozens of arbitrary rules, ask two straightforward questio
 
 1. **Does `E` have identity?**
 Can you point to a specific, identifiable location in memory (or a specific function) that outlives the immediate subexpression? In practical terms: *if you evaluated `E` twice, would you be referring to the exact same object?*
-   * If **Yes**, `E` is a **glvalue** (*generalized lvalue*).
-   * If **No**, `E` has no persistent home; it is just a transient result.
-
+   - If **Yes**, `E` is a **glvalue** (*generalized lvalue*).
+   - If **No**, `E` has no persistent home; it is just a transient result.
 2. **Can `E`'s resources be reused (i.e., moved from)?**
 Is the object behind `E` either an unnamed temporary or explicitly marked as "about to be discarded", meaning another function is allowed to steal its internal buffers or handles without breaking anything?
-   * If **Yes**, `E` is an **rvalue**.
-   * If **No**, `E` is actively in use and must not be pilfered.
+   - If **Yes**, `E` is an **rvalue**.
+   - If **No**, `E` is actively in use and must not be pilfered.
 
 
 Combining these two yes/no answers yields four logical combinations. C++ uses three of them as its fundamental value categories; the fourth — neither identity nor movability — would be useless, so it does not exist:
@@ -130,17 +129,17 @@ flowchart LR
 
 Because some C++ rules care only about *identity* while others care only about *movability*, the standard groups these three into **two overlapping umbrella categories**:
 
-* **glvalue** = `lvalue` ∪ `xvalue` (everything that has **identity**).
-* **rvalue** = `prvalue` ∪ `xvalue` (everything that is **movable**).
+- **glvalue** = `lvalue` ∪ `xvalue` (everything that has **identity**).
+- **rvalue** = `prvalue` ∪ `xvalue` (everything that is **movable**).
 
 Notice that **`xvalue` sits in the overlap**: it has identity like an `lvalue`, but permission to be moved from like a `prvalue`.
 
 ### An everyday analogy — and where it stops
 
 ::: tip A house, a cup of coffee, and an estate sale
-* An **lvalue** is **your house**. It has a street address (identity), you can invite guests over (`&house`), and nobody is allowed to haul away your furniture without asking.
-* A **prvalue** is **the aroma of freshly brewed coffee** drifting across the kitchen. You can enjoy it right now (use it to initialize a variable or compute a result), but you cannot mail a letter to the aroma — it has no street address.
-* An **xvalue** is **a house on closing day with an "Everything Must Go" sign**. It still has a street address (identity), so you know exactly which house it is, but the owner has explicitly declared that movers may strip the furniture out of it.
+- An **lvalue** is **your house**. It has a street address (identity), you can invite guests over (`&house`), and nobody is allowed to haul away your furniture without asking.
+- A **prvalue** is **the aroma of freshly brewed coffee** drifting across the kitchen. You can enjoy it right now (use it to initialize a variable or compute a result), but you cannot mail a letter to the aroma — it has no street address.
+- An **xvalue** is **a house on closing day with an "Everything Must Go" sign**. It still has a street address (identity), so you know exactly which house it is, but the owner has explicitly declared that movers may strip the furniture out of it.
 :::
 
 ::: warning Where the analogy breaks
@@ -169,26 +168,28 @@ Adding `a` and `b` computes a brand-new result. That result is neither `a` nor `
 
 This classic comparison makes the "identity" test crystal clear:
 
-* **`++a` (prefix)**: Increments `a` in place and returns `a` itself. Because the result *is* the identifiable object `a`, `++a` is an **lvalue** (`&(++a)` is valid!).
-* **`a++` (postfix)**: Saves a snapshot of `a`'s old value, increments `a`, and returns that temporary snapshot. Because the snapshot is a transient copy rather than `a` itself, `a++` is a **prvalue** (`&(a++)` fails to compile).
+- **`++a` (prefix)**: Increments `a` in place and returns `a` itself. Because the result *is* the identifiable object `a`, `++a` is an **lvalue** (`&(++a)` is valid!).
+- **`a++` (postfix)**: Saves a snapshot of `a`'s old value, increments `a`, and returns that temporary snapshot. Because the snapshot is a transient copy rather than `a` itself, `a++` is a **prvalue** (`&(a++)` fails to compile).
 
 ### 5. Member access (`obj.member`) → inherits from `obj`
 
 When accessing a non-static data member `m` of an object `obj`:
 
-* If `obj` is an **lvalue** (e.g., `person.name`), `person.name` is an **lvalue** — `name` is part of an existing, persistent object.
-* If `obj` is an **rvalue** (e.g., `make_person().name` or `std::move(person).name`), the outer object is about to expire, so its subobject `name` is also expiring. Thus `obj.name` becomes an **xvalue**.
+- If `obj` is an **lvalue** (e.g., `person.name`), `person.name` is an **lvalue** — `name` is part of an existing, persistent object.
+- If `obj` is an **rvalue** (e.g., `make_person().name` or `std::move(person).name`), the outer object is about to expire, so its subobject `name` is also expiring. Thus `obj.name` becomes an **xvalue**.
 
 ### 6. `std::move(a)` and `static_cast<T&&>(a)` → **xvalue**
 
-`std::move(a)` does not execute any runtime instructions. Under the hood, it is literally a type cast: `static_cast<std::remove_reference_t<T>&&>(a)`. Casting an object to an rvalue reference tells the compiler: *"Keep pointing at `a`'s memory address (identity), but treat its resources as eligible for reuse (movable)."* That is exactly the definition of an **xvalue**.
+`std::move(a)` does not execute any runtime instructions. Under the hood, it is literally a type cast: `static_cast<std::remove_reference_t<T>&&>(a)`.
+Casting an object to an rvalue reference tells the compiler: *"Keep pointing at `a`'s memory address (identity), but treat its resources as eligible for reuse (movable)."*
+That is exactly the definition of an **xvalue**.
 
 ## Hands-On Lab: Observing Value Categories via Overload Resolution
 
 The most practical way to see value categories in action is to watch how C++ chooses between two overloaded functions:
 
-* `void inspect(int& x)` — accepts **only lvalues** (mutable objects we must not steal from).
-* `void inspect(int&& x)` — accepts **only rvalues** (`prvalue`s and `xvalue`s — temporaries or expiring objects we are allowed to move from).
+- `void inspect(int& x)` — accepts **only lvalues** (mutable objects we must not steal from).
+- `void inspect(int&& x)` — accepts **only rvalues** (`prvalue`s and `xvalue`s — temporaries or expiring objects we are allowed to move from).
 
 ### Step 1 — Set up the probe functions
 
@@ -274,15 +275,16 @@ std::move(rref):     [rvalue]  received value = 20
 
 **Look closely at lines 4–5 and 8–9:**
 
-* **Lines 4 & 5 (`++a` vs. `a++`)**: `++a` incremented `a` from `10` to `11` and routed to `[lvalue]`. Then `a++` evaluated to the old value `11` (a temporary snapshot) and routed to `[rvalue]`, while quietly incrementing `a` to `12` in the background (which you can see on line 6).
-* **Line 8 (`inspect(rref)`)**: Even though `rref` was declared as `int&&`, passing `rref` by name called `inspect(int&)`. Because `rref` has a name, you could use `rref` again on line 9! If line 8 had silently treated `rref` as an rvalue and cannibalized its resources, line 9 would be reading from a gutted object. C++ protects you by making **every named variable an lvalue**, regardless of its declared type.
+- **Lines 4 & 5 (`++a` vs. `a++`)**: `++a` incremented `a` from `10` to `11` and routed to `[lvalue]`. Then `a++` evaluated to the old value `11` (a temporary snapshot) and routed to `[rvalue]`, while quietly incrementing `a` to `12` in the background (which you can see on line 6).
+- **Line 8 (`inspect(rref)`)**: Even though `rref` was declared as `int&&`, passing `rref` by name called `inspect(int&)`. Because `rref` has a name, you could use `rref` again on line 9! If line 8 had silently treated `rref` as an rvalue and cannibalized its resources, line 9 would be reading from a gutted object. C++ protects you by making **every named variable an lvalue**, regardless of its declared type.
 
 ::: tip Going one step further: distinguishing prvalue vs. xvalue
-Overload resolution (`T&` vs. `T&&`) groups `prvalue` and `xvalue` together as **rvalues**. If you ever want the compiler to distinguish all three categories, wrap the expression in double parentheses inside `decltype((expr))`:
+Overload resolution (`T&` vs. `T&&`) groups `prvalue` and `xvalue` together as **rvalues**.
+If you ever want the compiler to distinguish all three categories, wrap the expression in double parentheses inside `decltype((expr))`:
 
-* `decltype((expr))` yields `T&` if `expr` is an **lvalue**
-* `decltype((expr))` yields `T&&` if `expr` is an **xvalue**
-* `decltype((expr))` yields `T` if `expr` is a **prvalue**
+- `decltype((expr))` yields `T&` if `expr` is an **lvalue**
+- `decltype((expr))` yields `T&&` if `expr` is an **xvalue**
+- `decltype((expr))` yields `T` if `expr` is a **prvalue**
 :::
 
 ## Common Misunderstandings & Pitfalls
@@ -318,8 +320,8 @@ void process(std::string&& s)
 
 **Rule of thumb:** *If it has a name, it is an lvalue.* Always distinguish between:
 
-* **Variable type** (`std::string&&`): determines what `s` can bind to during initialization.
-* **Expression value category** (`lvalue`): determines how `s` behaves when used in subsequent statements.
+- **Variable type** (`std::string&&`): determines what `s` can bind to during initialization.
+- **Expression value category** (`lvalue`): determines how `s` behaves when used in subsequent statements.
 :::
 
 ### Pitfall 3 — "`std::move(x)` immediately moves or destroys `x`"
@@ -444,14 +446,14 @@ User(std::string&& name)
 
 ## Summary
 
-* Every C++ expression has **two independent attributes**: a non-reference **type** and a **value category** (`lvalue`, `prvalue`, or `xvalue`).
-* Classify any expression with **two questions**:
+- Every C++ expression has **two independent attributes**: a non-reference **type** and a **value category** (`lvalue`, `prvalue`, or `xvalue`).
+- Classify any expression with **two questions**:
   1. Does it have **identity** (an identifiable memory address or function)? → **glvalue** (`lvalue` or `xvalue`).
   2. May its resources be **reused / moved from**? → **rvalue** (`prvalue` or `xvalue`).
-* **lvalue**: has identity, not movable (`a`, `++a`, `arr[i]`, `"hello"`, and any named reference variable like `rref`).
-* **prvalue**: no identity, movable (`42`, `a + b`, `a++`, functions returning by value).
-* **xvalue**: has identity *and* movable (`std::move(a)`, `static_cast<T&&>(a)`, member access on an rvalue).
-* **`std::move` does not move anything** — it is a zero-cost cast that produces an **xvalue**, granting permission for `T&&` overloads (like move constructors) to steal resources.
+- **lvalue**: has identity, not movable (`a`, `++a`, `arr[i]`, `"hello"`, and any named reference variable like `rref`).
+- **prvalue**: no identity, movable (`42`, `a + b`, `a++`, functions returning by value).
+- **xvalue**: has identity *and* movable (`std::move(a)`, `static_cast<T&&>(a)`, member access on an rvalue).
+- **`std::move` does not move anything** — it is a zero-cost cast that produces an **xvalue**, granting permission for `T&&` overloads (like move constructors) to steal resources.
 
 ## Quick Reference
 
