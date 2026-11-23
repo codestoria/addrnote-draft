@@ -279,7 +279,7 @@ int main() {
 }
 ```
 
-`view` promised not to modify `original` *through `view`*. It did not promise that `original` could never change anywhere else in the program.
+`view` promised not to modify `original` *through* `view`. It did not promise that `original` could never change anywhere else in the program.
 
 ## Common Misunderstandings & Pitfalls
 
