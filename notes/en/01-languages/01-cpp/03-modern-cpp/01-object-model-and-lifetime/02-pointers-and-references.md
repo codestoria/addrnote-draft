@@ -135,9 +135,9 @@ An lvalue reference declaration `T& ref = expr;` binds the identifier `ref` to a
 
 ```cpp
 int value = 10;
-int& ref = value;   // ref is an lvalue reference bound to value
+int& ref = value;  // ref is an lvalue reference bound to value
 
-ref = 30;           // assigns 30 to value; ref remains bound to value
+ref = 30;          // assigns 30 to value; ref remains bound to value
 ```
 
 Three core rules govern reference binding:
@@ -276,13 +276,13 @@ void award_bonus(Profile& p, int bonus) {
 int main() {
     Profile user{"Maya", 50};
 
-    show_by_value(user);      // Copies 'user' (including std::string buffer)
+    show_by_value(user);  // Copies 'user' (including std::string buffer)
     std::cout << "after show_by_value: score = " << user.score << '\n';
 
-    show_by_const_ref(user);                     // Zero-copy read-only access
-    show_by_const_ref(Profile{"Guest", 10});     // Valid: const& binds to temporary
+    show_by_const_ref(user);                  // Zero-copy read-only access
+    show_by_const_ref(Profile{"Guest", 10});  // Valid: const& binds to temporary
 
-    award_bonus(user, 25);                       // Mutates 'user.score' in place
+    award_bonus(user, 25);                    // Mutates 'user.score' in place
     std::cout << "after award_bonus:   score = " << user.score << '\n';
 }
 ```
@@ -319,8 +319,8 @@ int main() {
     int scores[4] = {88, 92, 79, 95};
 
     std::cout << "sizeof(scores) in main = " << sizeof(scores) << " bytes\n";
-    print_elements(scores, 4);    // Decays to const int*
-    print_exact_four(scores);     // No decay: binds directly to int[4]
+    print_elements(scores, 4);  // Decays to const int*
+    print_exact_four(scores);   // No decay: binds directly to int[4]
 }
 ```
 
@@ -375,7 +375,8 @@ int* p;   // Uninitialized: holds an indeterminate address
 *p = 42;  // Undefined behavior (often a segmentation fault or silent corruption)
 ```
 
-Unlike references, the compiler does not force you to initialize a pointer. Always initialize every pointer either to a valid object's address (`&x`) or explicitly to `nullptr`, and check `if (p != nullptr)` before dereferencing when null is possible.
+Unlike references, the compiler does not force you to initialize a pointer.
+Always initialize every pointer either to a valid object's address (`&x`) or explicitly to `nullptr`, and check `if (p != nullptr)` before dereferencing when null is possible.
 :::
 
 ### Pitfall 4 — Thinking `ref = other;` rebinds a reference
@@ -402,13 +403,15 @@ void increment(int& x) { ++x; }
 increment(5);  // Compiler error: cannot bind non-const lvalue reference to an rvalue
 ```
 
-C++ forbids binding `T&` to a temporary (`5`) because mutating an anonymous value that is about to vanish is almost always a bug. If the function only needs to read the value, change the parameter to `const int&` (or `int` for small types).
+C++ forbids binding `T&` to a temporary (`5`) because mutating an anonymous value that is about to vanish is almost always a bug.
+If the function only needs to read the value, change the parameter to `const int&` (or `int` for small types).
 :::
 
 ### Pitfall 6 — Assuming `void f(int arr[10])` enforces an array of size 10
 
 ::: warning Declaration adjustment rule
-In a function parameter list, `void f(int arr[10])` and `void f(int arr[])` are adjusted by the compiler to the exact same signature as `void f(int* arr)`. The `10` is ignored by the type system, and `sizeof(arr)` inside `f` is `sizeof(int*)`.
+In a function parameter list, `void f(int arr[10])` and `void f(int arr[])` are adjusted by the compiler to the exact same signature as `void f(int* arr)`.
+The `10` is ignored by the type system, and `sizeof(arr)` inside `f` is `sizeof(int*)`.
 :::
 
 ## Practice Check
