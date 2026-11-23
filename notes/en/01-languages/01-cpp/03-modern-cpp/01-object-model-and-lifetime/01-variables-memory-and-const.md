@@ -63,7 +63,8 @@ three distinct concepts come into play:
    - **Size:** How many bytes that storage occupies (for example, `sizeof(int)` is commonly `4` bytes on desktop platforms).
    - **Alignment:** A rule stating that the object's address must be a multiple of a certain byte boundary (for example, a 4-byte `int` often prefers or requires an address divisible by `4`) so hardware can read and write it efficiently.
 
-Think of a type as the **blueprint/rulebook** and the memory space as the **physical storage** where bytes live. Later on, you will also see how **storage duration** (when raw bytes are allocated and reclaimed) differs from **object lifetime** (when a valid, initialized object actually exists in those bytes) — for now, we focus on how names, types, and `const` govern reading and writing.
+Think of a type as the **blueprint/rulebook** and the memory space as the **physical storage** where bytes live.
+Later on, you will also see how **storage duration** (when raw bytes are allocated and reclaimed) differs from **object lifetime** (when a valid, initialized object actually exists in those bytes) — for now, we focus on how names, types, and `const` govern reading and writing.
 
 ### The intuition, in one sentence
 
@@ -79,7 +80,7 @@ In everyday speech, people call almost anything in code an "object." In C++, the
 Why does this distinction matter? Because **not every entity is an object**:
 
 - **Functions** are entities (you can name them and call them), not data objects holding values in writable variable boxes.
-- **References** (such as `int& ref = x;`) are entities — aliases bound to an existing object — rather than separate standalone data objects with their own independent value storage in the abstract machine.
+- **References** (such as `int& ref = x;`) are entities — aliases bound to an existing object — rather than data objects themselves in C++'s language model (even if a compiler/ABI may allocate storage for a reference in certain contexts, such as class members or function arguments).
 
 ```mermaid
 flowchart LR
@@ -108,7 +109,9 @@ flowchart LR
 ::: tip Locker labels and viewing windows
 Imagine a row of lockers in a hallway.
 
-A **name** (`x`) is a **nametag** clipped onto a locker door. The **type** (`int`) tells you what kind of item fits and how to read it. The locker's **address** is its number in the hallway, its **size** is how wide the locker is, and its **alignment** is the spacing rule on the wall.
+A **name** (`x`) is a **nametag** clipped onto a locker door.
+The **type** (`int`) tells you what kind of item fits and how to read it.
+The locker's **address** is its number in the hallway, its **size** is how wide the locker is, and its **alignment** is the spacing rule on the wall.
 
 Now picture **`const`**:
 - Putting `const` on the **item inside** (`const int`) is like putting a **glass cover** over the item: you can look at it, but you cannot reach in and swap it out through that `const` view.
@@ -116,9 +119,11 @@ Now picture **`const`**:
 :::
 
 ::: warning Where the analogy breaks
-In the real world, a physical lock on a locker can stop anyone from touching the item. In C++, `const` is primarily a **compile-time access rule** on a type/expression, not an unbreakable hardware lock on physical RAM.
+In the real world, a physical lock on a locker can stop anyone from touching the item.
+In C++, `const` is primarily a **compile-time access rule** on a type/expression, not an unbreakable hardware lock on physical RAM.
 
-If you have a non-`const` variable `int a = 10;` and a `const int* p = &a;`, the underlying memory of `a` is still mutable through `a`. Furthermore, if someone illegally casts away `const` with `const_cast` on an object that *was* originally defined as `const`, modifying it causes **undefined behavior** — C++ does not guarantee a neat runtime error; anything can happen.
+If you have a non-`const` variable `int a = 10;` and a `const int* p = &a;`, the underlying memory of `a` is still mutable through `a`.
+Furthermore, if someone illegally casts away `const` with `const_cast` on an object that *was* originally defined as `const`, modifying it causes **undefined behavior** — C++ does not guarantee a neat runtime error; anything can happen.
 :::
 
 ### Top-level `const` vs. low-level `const`
@@ -140,15 +145,18 @@ A classic reading rule helps: **read a type declaration from right to left**, st
 
 ### How C++ models storage, types, and `const`
 
-1. **Storage duration & layout:** An object occupies contiguous bytes of storage with a determined size (`sizeof(T)`) and alignment requirement (`alignof(T)`). For most objects, you can obtain their address with the address-of operator `&` (exceptions include bit-fields and temporary values/prvalues).
+1. **Storage duration & layout:** An object occupies contiguous bytes of storage with a determined size (`sizeof(T)`) and alignment requirement (`alignof(T)`). You can obtain the address of most objects with the address-of operator `&`, whereas non-objects such as bit-fields and non-addressable temporary/rvalue expressions cannot have their address taken with `&`.
 2. **Type qualifiers:** `const` is a type qualifier. Adding `const` to a type produces a `const`-qualified version of that type, restricting operations that mutate values through that qualified type.
 3. **Pointer declarator rules:** In a pointer declarator, `const` before `*` modifies the pointee type (low-level relative to the pointer), whereas `const` after `*` modifies the pointer itself (top-level on that pointer).
 4. **Implicit conversion to `const`:** In C++, you can implicitly convert a non-`const` pointer to a pointer to `const` (for example, `int*` to `const int*`), adding `const` protection. The reverse — implicitly converting `const int*` to `int*` — is forbidden because it would silently drop `const` protection.
 
 ::: warning Two subtleties worth memorizing
-**`const int` and `int const` mean the exact same thing.** Placing `const` before or after the base type specifier (`int`) produces the identical type. Consistency in your codebase matters more than which order you pick, though you must read `const` on the *right* of `*` as applying to the pointer itself.
+**`const int` and `int const` mean the exact same thing.** Placing `const` before or after the base type specifier (`int`) produces the identical type.
+Consistency in your codebase matters more than which order you pick, though you must read `const` on the *right* of `*` as applying to the pointer itself.
 
-**`const` does not automatically make a runtime value a compile-time constant.** In C++, `const int n = get_runtime_value();` is valid: `n` cannot be modified after initialization, yet its value is only known at runtime. (Compile-time constant expressions are a related, stricter concept, often associated with `constexpr`.)
+**`const` does not automatically make a runtime value a compile-time constant.**
+In C++, `const int n = get_runtime_value();` is valid: `n` cannot be modified after initialization, yet its value is only known at runtime.
+(Compile-time constant expressions are a related, stricter concept, often associated with `constexpr`.)
 :::
 
 ### Quick comparison of `int` and pointer `const` forms
@@ -201,7 +209,7 @@ int main() {
 
 - `sizeof(x)` reports how many bytes the object `x` occupies.
 - `alignof(x)` reports the alignment requirement of `x`'s type (`int`).
-- `&x` obtains the address of `x`. Casting to `const void*` ensures `std::cout` prints it as a raw memory address. This avoids implicit conversion to `const char*`, which would mistakenly interpret the pointer as a C-style string.
+- `&x` obtains the address of `x`. Casting to `const void*` explicitly formats the value as a generic pointer address in `std::cout` (which is especially important when printing `char*` or `const char*` values so they are not treated as C-style strings).
 
 ### Step 2 — see how a pointer is its own object with its own address
 
@@ -279,26 +287,31 @@ int main() {
 }
 ```
 
-`view` promised not to modify `original` *through* `view`. It did not promise that `original` could never change anywhere else in the program.
+`view` promised not to modify `original` *through* `view`.
+It did not promise that `original` could never change anywhere else in the program.
 
 ## Common Misunderstandings & Pitfalls
 
 ### Pitfall 1 — Treating a `const` view as unchangeable memory
 
 ::: danger False
-If you have `const int* p = &x;` where `x` is a non-`const` `int`, `x` can still be modified through `x` (or another non-`const` pointer). `const` on `p` restricts *you when using* `p`; it does not make `x`'s bytes read-only in hardware.
+If you have `const int* p = &x;` where `x` is a non-`const` `int`, `x` can still be modified through `x` (or another non-`const` pointer).
+`const` on `p` restricts *you when using* `p`; it does not make `x`'s bytes read-only in hardware.
 :::
 
 ### Pitfall 2 — Confusing `const int*` and `int* const`
 
 ::: danger False
-Beginners often assume `const int*` means "constant pointer." In fact, `const int*` means "pointer to `const int`." To make the pointer itself `const`, put `const` after `*`: `int* const`.
+Beginners often assume `const int*` means "constant pointer." In fact, `const int*` means "pointer to `const int`."
+To make the pointer itself `const`, put `const` after `*`: `int* const`.
 :::
 
 ### Pitfall 3 — Assuming `const` always means "evaluated at compile time"
 
 ::: warning Subtle distinction
-In C++, `const` means **read-only through this name/access path**, not necessarily **compile-time constant**. A `const` variable can be initialized from a runtime expression (such as user input or a function return value). If you specifically need a compile-time constant, look into `constexpr` as you advance.
+In C++, `const` means **read-only through this name/access path**, not necessarily **compile-time constant**.
+A `const` variable can be initialized from a runtime expression (such as user input or a function return value).
+If you specifically need a compile-time constant, look into `constexpr` as you advance.
 :::
 
 ### Pitfall 4 — Thinking a `const` variable can never be initialized
@@ -320,16 +333,17 @@ Initializing is setting its initial value when created; assigning is overwriting
 ```cpp
 const int x = 10;
 const int* cp = &x;
-int* p = cp;  // Error: invalid conversion from 'const int*' to 'int*'
+int* p = cp;  // Error: cannot convert 'const int*' to 'int*'
 ```
 
-If the compiler allowed this implicitly, you could write `*p = 20;` and silently break the `const` contract of `cp` (and cause undefined behavior if `x` was actually `const`).
+If the compiler allowed this implicitly, you could write `*p = 20;` and silently break the `const` contract of `cp` — and since `x` is defined as `const`, modifying it (even via `const_cast`) causes undefined behavior.
 :::
 
 ### Pitfall 6 — Calling functions or references "data objects"
 
 ::: warning Terminology trap
-In C++, a function is an entity, not a data object you hold a value inside, and a reference is an alias to an existing object rather than a separate value-holding object. Keeping this straight prevents confusion later when learning references, pointers to functions, and `sizeof`.
+In C++, a function is an entity, not a data object you hold a value inside, and a reference is an alias to an existing object rather than a standalone data object in the language model (though underlying implementations may reserve storage for it in some cases).
+Keeping this straight prevents confusion later when learning references, pointers to functions, and `sizeof`.
 :::
 
 ## Practice Check
@@ -384,7 +398,8 @@ Output:
 12
 ```
 
-Even though `ptr` points to `const int`, `value` itself was defined as a non-`const` `int` and was modified directly through `value`. Reading `*ptr` then reads the updated value `12` from that memory location.
+Even though `ptr` points to `const int`, `value` itself was defined as a non-`const` `int` and was modified directly through `value`.
+Reading `*ptr` then reads the updated value `12` from that memory location.
 :::
 
 ::: details Exercise 3 — matching declarations

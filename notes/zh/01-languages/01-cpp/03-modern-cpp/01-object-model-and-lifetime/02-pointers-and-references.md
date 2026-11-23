@@ -84,9 +84,9 @@ A **pointer** is a separate variable that holds an **address** (which you can ch
 
 ### Why "a reference is not an independent object"
 
-Recall from the previous chapter that in C++, every **object** is an **entity**, but not every **entity** is an object. A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
+Recall that in C++, every **object** is an **entity**, but not every **entity** is an object. A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
 
-1. **No arrays of references:** `int& arr[3];` is illegal because array elements must be objects.
+1. **No arrays of references:** `int& arr[4];` is illegal because array elements must be objects, and references are not objects (unlike a reference to an array, `int (&ref)[4]`, which binds to an existing `int[4]` array).
 2. **No pointers to references:** `int&* p;` is ill-formed because pointers can only point to objects or functions, and a reference is neither.
 3. **`&ref` returns the target's address:** Taking the address of a reference asks "where does the bound object live?", not "where does the alias live?"
 4. **`sizeof(ref)` returns `sizeof(T)`:** Asking for the size of a reference reports the size of the referenced type `T` (for example, `sizeof(int)`), not `sizeof(void*)`.
@@ -96,9 +96,9 @@ Recall from the previous chapter that in C++, every **object** is an **entity**,
 ::: tip Two names for one house
 Imagine a house on Elm Street (`x`) that your family also calls "the lake house" (`ref`).
 
-* If you paint the front door of "the lake house" (`ref = 100;`), the house on Elm Street (`x`) now has a freshly painted door (`x` becomes `100`).
-* If you ask for the street address of "the lake house" (`&ref`), you get the exact same address as `&x`.
-* You cannot peel the nickname "the lake house" off that building and attach it to a different house down the road.
+- If you paint the front door of "the lake house" (`ref = 100;`), the house on Elm Street (`x`) now has a freshly painted door (`x` becomes `100`).
+- If you ask for the street address of "the lake house" (`&ref`), you get the exact same address as `&x`.
+- You cannot peel the nickname "the lake house" off that building and attach it to a different house down the road.
 
 By contrast, a **pointer** (`int* ptr = &x;`) is a **sticky note** with `x`'s street address written on it. The sticky note sits on your desk (it has its own location, `&ptr`), you can visit the house written on it (`*ptr`), or you can erase it and write a different house's address (`ptr = &y;`).
 :::
@@ -109,9 +109,9 @@ At the machine-code level, a compiler often implements a reference *under the ho
 
 ### When to choose `const T&`, `T&`, or `T*`
 
-* **Use `const T&`** by default when a function needs to **read** a non-trivial object without copying it and without modifying it. It guarantees a valid target, avoids copies, and accepts temporary objects (rvalues).
-* **Use `T&`** when a function's purpose is to **modify** a caller's existing object and a valid target is always required.
-* **Use `T*` (or `const T*`)** when **"no object" (`nullptr`) is a valid state**, when you need to **rebind** which object is targeted over time, when building pointer-linked structures, or when interacting with C-style APIs.
+- **Use `const T&`** by default when a function needs to **read** a non-trivial object without copying it and without modifying it. It guarantees a valid target, avoids copies, and accepts temporary objects (rvalues).
+- **Use `T&`** when a function's purpose is to **modify** a caller's existing object and a valid target is always required.
+- **Use `T*` (or `const T*`)** when **"no object" (`nullptr`) is a valid state**, when you need to **rebind** which object is targeted over time, when building pointer-linked structures, or when interacting with C-style APIs.
 
 ## Formal Definition / Mechanism
 
@@ -126,8 +126,8 @@ int* ptr = &value;  // ptr stores the address of value
 *ptr = 25;          // dereferences ptr to modify value
 ```
 
-* **Address-of (`&value`):** Produces a pointer of type `int*` holding the starting address of `value`.
-* **Dereference (`*ptr`):** Accesses the object located at the address stored inside `ptr`. Dereferencing `nullptr`, an uninitialized pointer, or a pointer to a destroyed object causes **undefined behavior**.
+- **Address-of (`&value`):** Produces a pointer of type `int*` holding the starting address of `value`.
+- **Dereference (`*ptr`):** Accesses the object located at the address stored inside `ptr`. Dereferencing `nullptr`, an uninitialized pointer, or a pointer to a destroyed object causes **undefined behavior**.
 
 ### Reference binding mechanics
 
@@ -135,9 +135,9 @@ An lvalue reference declaration `T& ref = expr;` binds the identifier `ref` to a
 
 ```cpp
 int value = 10;
-int& ref = value;   // ref is an lvalue reference bound to value
+int& ref = value;  // ref is an lvalue reference bound to value
 
-ref = 30;           // assigns 30 to value; ref remains bound to value
+ref = 30;          // assigns 30 to value; ref remains bound to value
 ```
 
 Three core rules govern reference binding:
@@ -145,8 +145,8 @@ Three core rules govern reference binding:
 1. **Mandatory initialization:** A reference must be initialized when defined (including via function call arguments, constructor member initializer lists, or `extern` declarations).
 2. **Permanent binding (no reseating):** Once bound, `ref` can never be redirected to another object. Any assignment `ref = other;` invokes the assignment operator on the underlying `T` object.
 3. **`const` binding rules:**
-* A non-const lvalue reference (`T&`) can bind **only** to a modifiable lvalue of type `T`. It cannot bind to a `const T` or to a temporary value (rvalue), because allowing a non-const reference to mutate a temporary or a `const` object would break type safety.
-* A `const` lvalue reference (`const T&`) can bind to modifiable lvalues, `const` lvalues, **and** temporary values (rvalues). When bound directly to a temporary, `const T&` extends that temporary's lifetime to match the lifetime of the reference (with important caveats noted in Pitfall 2).
+   - A non-const lvalue reference (`T&`) can bind **only** to a modifiable lvalue of type `T`. It cannot bind to a `const T` or to a temporary value (rvalue), because allowing a non-const reference to mutate a temporary or a `const` object would break type safety.
+   - A `const` lvalue reference (`const T&`) can bind to modifiable lvalues, `const` lvalues, **and** temporary values (rvalues). When bound directly to a temporary, `const T&` extends that temporary's lifetime to match the lifetime of the reference (with important caveats noted in Pitfall 2).
 
 ### Parameter passing: value vs. `T&` vs. `const T&`
 
@@ -155,7 +155,7 @@ flowchart TD
     START["Passing parameter of type T to a function"]
     Q1{"Does the function need<br/>to modify the caller's object?"}
     Q2{"Can the argument<br/>be missing (null)?"}
-    Q3{"Is T cheap to copy?<br/>(e.g., int, double, std::string_view)"}
+    Q3{"Is T cheap to copy?<br/>(e.g., int, double, char)"}
 
     START --> Q1
     Q1 -- Yes --> Q2
@@ -167,9 +167,9 @@ flowchart TD
     Q3 -- No --> CREF["Pass by const reference: const T&"]
 ```
 
-* **Pass by value (`void f(BigObj x)`):** Constructs a new `BigObj` parameter inside `f` from the caller's argument. Mutating `x` affects only `f`'s local parameter.
-* **Pass by reference (`void f(BigObj& x)`):** Binds `x` directly to the caller's lvalue with zero copying. Mutating `x` mutates the caller's variable. Cannot accept temporaries such as `f(BigObj{})`.
-* **Pass by const reference (`void f(const BigObj& x)`):** Binds `x` with zero copying while preventing modification through `x`. Accepts both named variables (lvalues) and temporaries (rvalues).
+- **Pass by value (`void f(BigObj x)`):** Constructs a new `BigObj` parameter inside `f` from the caller's argument. Mutating `x` affects only `f`'s local parameter.
+- **Pass by reference (`void f(BigObj& x)`):** Binds `x` directly to the caller's lvalue with zero copying. Mutating `x` mutates the caller's variable. Cannot accept temporaries such as `f(BigObj{})`.
+- **Pass by const reference (`void f(const BigObj& x)`):** Binds `x` with zero copying while preventing modification through `x`. Accepts both named variables (lvalues) and temporaries (rvalues).
 
 ### Array-to-pointer decay
 
@@ -186,6 +186,27 @@ void inspect(int* p) {
 ```
 
 Why does this happen? For compatibility with C, C++ does not copy entire built-in arrays by value when passing them to functions; instead, it passes the address of element `0`. Because a raw pointer `T*` carries no length metadata, you must pass the element count explicitly (`std::size_t n`) or use modern wrappers such as `std::array<T, N>` or `std::span<T>`.
+
+### Combining arrays, pointers, and references: reading the declarations
+
+Because `[]` has higher precedence than `*` and `&`, parentheses change what the declaration means:
+
+```cpp
+int a = 1, b = 2, c = 3, d = 4;
+int raw[4] = {a, b, c, d};
+
+int* ptr_arr[4] = {&a, &b, &c, &d};  // Array of 4 pointers to int
+int (*arr_ptr)[4] = &raw;            // Pointer to an int[4] array
+int (&arr_ref)[4] = raw;             // Reference bound to an int[4] array
+// int& ref_arr[4];                  // Illegal: array of references is not allowed
+```
+
+| Declaration | What It Actually Is | Key Note |
+| --- | --- | --- |
+| `int* p[4];` | **Array of pointers:** an array of 4 `int*` elements | `[]` binds before `*`; each element can point elsewhere or be `nullptr` |
+| `int (*p)[4];` | **Pointer to array:** a single pointer to an `int[4]` | Parentheses group `*p` first; `p + 1` advances by `sizeof(int[4])` |
+| `int (&ref)[4];` | **Reference to array:** an alias bound to an `int[4]` | Preserves exact array length `4` and avoids array decay |
+| `int& arr[4];` | **Array of references (illegal)** | Array elements must be objects; references are not objects |
 
 ## Step-by-Step Example
 
@@ -214,9 +235,9 @@ int main() {
 
 **What this demonstrates:**
 
-* `&original`, `&alias`, and the value stored in `pointer` all print the **exact same address**, confirming that `alias` refers directly to `original`.
-* `&pointer` prints a **different address**, proving that `pointer` is a separate object in memory.
-* `sizeof(alias)` matches `sizeof(original)` (`4` bytes on typical desktop platforms), whereas `sizeof(pointer)` is the size of a memory address (`8` bytes on 64-bit systems).
+- `&original`, `&alias`, and the value stored in `pointer` all print the **exact same address**, confirming that `alias` refers directly to `original`.
+- `&pointer` prints a **different address**, proving that `pointer` is a separate object in memory.
+- `sizeof(alias)` matches `sizeof(original)` (`4` bytes on typical desktop platforms), whereas `sizeof(pointer)` is the size of a memory address (`8` bytes on 64-bit systems).
 
 ### Step 2 — Rebinding a pointer vs. assigning through a reference
 
@@ -276,13 +297,13 @@ void award_bonus(Profile& p, int bonus) {
 int main() {
     Profile user{"Maya", 50};
 
-    show_by_value(user);      // Copies 'user' (including std::string buffer)
+    show_by_value(user);  // Copies 'user' (including std::string buffer)
     std::cout << "after show_by_value: score = " << user.score << '\n';
 
-    show_by_const_ref(user);                     // Zero-copy read-only access
-    show_by_const_ref(Profile{"Guest", 10});     // Valid: const& binds to temporary
+    show_by_const_ref(user);                  // Zero-copy read-only access
+    show_by_const_ref(Profile{"Guest", 10});  // Valid: const& binds to temporary
 
-    award_bonus(user, 25);                       // Mutates 'user.score' in place
+    award_bonus(user, 25);                    // Mutates 'user.score' in place
     std::cout << "after award_bonus:   score = " << user.score << '\n';
 }
 ```
@@ -319,8 +340,8 @@ int main() {
     int scores[4] = {88, 92, 79, 95};
 
     std::cout << "sizeof(scores) in main = " << sizeof(scores) << " bytes\n";
-    print_elements(scores, 4);    // Decays to const int*
-    print_exact_four(scores);     // No decay: binds directly to int[4]
+    print_elements(scores, 4);  // Decays to const int*
+    print_exact_four(scores);   // No decay: binds directly to int[4]
 }
 ```
 
@@ -333,7 +354,6 @@ Array-to-pointer decay does **not** occur when an array is the operand of `sizeo
 ### Pitfall 1 — Returning a reference or pointer to a local variable
 
 ::: danger Undefined behavior (dangling reference / dangling pointer)
-
 ```cpp
 int& bad_ref() {
     int local = 10;
@@ -352,36 +372,40 @@ Local variables have **automatic storage duration** and are destroyed as soon as
 ### Pitfall 2 — Lifetime extension does not cross function return boundaries
 
 ::: warning Subtle lifetime trap
-While binding a local `const T&` directly to a temporary extends that temporary's lifetime to the end of the local scope, **returning a reference to a temporary — or passing a temporary through a helper function that returns `const T&` — does not extend its lifetime**:
+While binding a `const T&` directly to a temporary extends that temporary's lifetime to the end of that reference's scope, **returning a reference to a temporary — or passing a temporary through a helper function that returns `const T&` — does not extend its lifetime**:
 
 ```cpp
+#include <string>
+
 const std::string& dangerous_forward(const std::string& s) {
     return s;  // Returns reference to whatever 's' bound to
 }
 
-// Temporary std::string("temp") is destroyed at the semicolon!
-const std::string& dangling = dangerous_forward(std::string("temp"));
+void demo() {
+    // Temporary std::string("temp") is destroyed at the semicolon!
+    const std::string& dangling = dangerous_forward(std::string("temp"));
+    // Using 'dangling' here reads a destroyed object (undefined behavior).
+}
 ```
 
-By the time `dangling` is used on the next line, the temporary `std::string` has already been destroyed.
+By the time `dangling` is used after the call, the temporary `std::string` has already been destroyed.
 :::
 
 ### Pitfall 3 — Leaving raw pointers uninitialized
 
 ::: danger Undefined behavior on dereference
-
 ```cpp
-int* p;      // Uninitialized: holds an indeterminate address
-*p = 42;     // Undefined behavior (often a segmentation fault or silent corruption)
+int* p;   // Uninitialized: holds an indeterminate address
+*p = 42;  // Undefined behavior (often a segmentation fault or silent corruption)
 ```
 
-Unlike references, the compiler does not force you to initialize a pointer. Always initialize every pointer either to a valid object's address (`&x`) or explicitly to `nullptr`, and check `if (p != nullptr)` before dereferencing when null is possible.
+Unlike references, the compiler does not force you to initialize a pointer.
+Always initialize every pointer either to a valid object's address (`&x`) or explicitly to `nullptr`, and check `if (p != nullptr)` before dereferencing when null is possible.
 :::
 
 ### Pitfall 4 — Thinking `ref = other;` rebinds a reference
 
 ::: danger False
-
 ```cpp
 int x = 1;
 int y = 2;
@@ -395,20 +419,21 @@ Once initialized, a reference is permanently bound to `x`. Writing `ref = y;` pe
 ### Pitfall 5 — Passing a temporary to a non-const lvalue reference (`T&`)
 
 ::: warning Compiler error
-
 ```cpp
 void increment(int& x) { ++x; }
 
 increment(5);  // Compiler error: cannot bind non-const lvalue reference to an rvalue
 ```
 
-C++ forbids binding `T&` to a temporary (`5`) because mutating an anonymous value that is about to vanish is almost always a bug. If the function only needs to read the value, change the parameter to `const int&` (or `int` for small types).
+C++ forbids binding `T&` to a temporary (`5`) because mutating an anonymous value that is about to vanish is almost always a bug.
+If the function only needs to read the value, change the parameter to `const int&` (or `int` for small types).
 :::
 
 ### Pitfall 6 — Assuming `void f(int arr[10])` enforces an array of size 10
 
 ::: warning Declaration adjustment rule
-In a function parameter list, `void f(int arr[10])` and `void f(int arr[])` are adjusted by the compiler to the exact same signature as `void f(int* arr)`. The `10` is ignored by the type system, and `sizeof(arr)` inside `f` is `sizeof(int*)`.
+In a function parameter list, `void f(int arr[10])` and `void f(int arr[])` are adjusted by the compiler to the exact same signature as `void f(int* arr)`.
+The `10` is ignored by the type system, and `sizeof(arr)` inside `f` is `sizeof(int*)`.
 :::
 
 ## Practice Check
@@ -443,12 +468,12 @@ int main() {
     std::string text = "hello";
     const std::string ctext = "world";
 
-    read_only(text);            // (1)
-    read_only(ctext);           // (2)
-    read_only("literal");       // (3)
-    mutate(text);               // (4)
-    mutate(ctext);              // (5)
-    mutate("literal");          // (6)
+    read_only(text);       // (1)
+    read_only(ctext);      // (2)
+    read_only("literal");  // (3)
+    mutate(text);          // (4)
+    mutate(ctext);         // (5)
+    mutate("literal");     // (6)
 }
 ```
 
@@ -463,43 +488,41 @@ double* ptr = arr;
 ### Solutions
 
 ::: details Exercise 1 — output of the snippet
-
 Output:
 
 ```text
 10 30 10
 ```
 
-* `r` is bound to `a`, so `r = b;` assigns `10` to `a`.
-* `p = &b;` rebinds `p` to point to `b`, and `*p = 30;` sets `b` to `30`.
-* At the end, `a` is `10`, `b` is `30`, and `r` (still an alias for `a`) is `10`.
+- `r` is bound to `a`, so `r = b;` assigns `10` to `a`.
+- `p = &b;` rebinds `p` to point to `b`, and `*p = 30;` sets `b` to `30`.
+- At the end, `a` is `10`, `b` is `30`, and `r` (still an alias for `a`) is `10`.
 :::
 
 ::: details Exercise 2 — compilation and explanation
-
-* **(1) Compiles:** `const std::string&` can bind to a non-const lvalue (`text`).
-* **(2) Compiles:** `const std::string&` can bind to a `const` lvalue (`ctext`).
-* **(3) Compiles:** `"literal"` implicitly constructs a temporary `std::string`, and `const std::string&` can bind to temporaries (rvalues).
-* **(4) Compiles:** `std::string&` binds to a modifiable lvalue (`text`).
-* **(5) Fails to compile:** Cannot bind a non-const reference (`std::string&`) to a `const` object (`ctext`).
-* **(6) Fails to compile:** Cannot bind a non-const lvalue reference (`std::string&`) to a temporary `std::string` constructed from `"literal"`.
+- **(1) Compiles:** `const std::string&` can bind to a non-const lvalue (`text`).
+- **(2) Compiles:** `const std::string&` can bind to a `const` lvalue (`ctext`).
+- **(3) Compiles:** `"literal"` implicitly constructs a temporary `std::string`, and `const std::string&` can bind to temporaries (rvalues).
+- **(4) Compiles:** `std::string&` binds to a modifiable lvalue (`text`).
+- **(5) Fails to compile:** Cannot bind a non-const reference (`std::string&`) to a `const` object (`ctext`).
+- **(6) Fails to compile:** Cannot bind a non-const lvalue reference (`std::string&`) to a temporary `std::string` constructed from `"literal"`.
 :::
 
 ::: details Exercise 3 — sizes of array, reference, and pointer
-
-* `sizeof(arr)` is `40` (`5 * sizeof(double)` = `5 * 8` bytes; `sizeof` does not trigger array decay).
-* `sizeof(ref)` is `8` (`ref` is an alias for `arr[0]` of type `double`, so `sizeof(ref)` equals `sizeof(double)`).
-* `sizeof(ptr)` is `8` (`arr` decayed to `double*`, and a 64-bit pointer occupies `8` bytes).
+- `sizeof(arr)` is `40` (`5 * sizeof(double)` = `5 * 8` bytes; `sizeof` does not trigger array decay).
+- `sizeof(ref)` is `8` (`ref` is an alias for `arr[0]` of type `double`, so `sizeof(ref)` equals `sizeof(double)`).
+- `sizeof(ptr)` is `8` (`arr` decayed to `double*`, and a 64-bit pointer occupies `8` bytes).
 :::
 
 ## Summary
 
-* A **pointer** (`T*`) is an independent object storing a memory address (or `nullptr`) that can be inspected, null-checked, and rebound to different targets.
-* A **reference** (`T&`) is an **alias** (an entity, not a separate data object) that must be bound to a valid target at creation and can never be reseated.
-* `&ref` yields the address of the bound object, and `sizeof(ref)` yields `sizeof(T)`.
-* Prefer **pass-by-value** for small, cheap-to-copy types, **`const T&`** for read-only access to larger types or temporaries, **`T&`** for mandatory in-place mutation, and **`T*`** when `nullptr` or rebinding is needed.
-* Built-in arrays implicitly **decay** to a pointer to their first element in most expressions, losing their length information unless passed explicitly or wrapped in `std::array` / `std::span`.
-* Never return a pointer or reference to a local variable whose lifetime ends when the function returns.
+- A **pointer** (`T*`) is an independent object storing a memory address (or `nullptr`) that can be inspected, null-checked, and rebound to different targets.
+- A **reference** (`T&`) is an **alias** (an entity, not a separate data object) that must be bound to a valid target at creation and can never be reseated.
+- `&ref` yields the address of the bound object, and `sizeof(ref)` yields `sizeof(T)`.
+- Prefer **pass-by-value** for small, cheap-to-copy types, **`const T&`** for read-only access to larger types or temporaries, **`T&`** for mandatory in-place mutation, and **`T*`** when `nullptr` or rebinding is needed.
+- Built-in arrays implicitly **decay** to a pointer to their first element in most expressions, losing their length information unless passed explicitly, bound via `int (&ref)[4]`, or wrapped in `std::array` / `std::span`.
+- Pay attention to declaration grouping: `int* p[4]` is an array of pointers, `int (*p)[4]` is a pointer to an `int[4]` array, `int (&ref)[4]` is a reference to an `int[4]` array, and `int& arr[4]` is ill-formed because references are not objects.
+- Never return a pointer or reference to a local variable whose lifetime ends when the function returns.
 
 ## Quick Reference
 
@@ -512,5 +535,9 @@ Output:
 | `void f(T x)` | Pass by value | Copies/moves argument; best for small, cheap types |
 | `void f(const T& x)` | Pass by `const` reference | Zero-copy read-only view; accepts lvalues and temporaries |
 | `void f(T& x)` | Pass by mutable reference | Zero-copy in-place modification; requires a non-const lvalue |
-| `void f(T* p)` | Pass by pointer | Allows `nullptr` (optional target) or pointer arithmetic |
+| `void f(T* p)` | Pass by pointer | Allows `nullptr` (optional target) or rebinding to another object |
 | Array decay (`arr` → `&arr[0]`) | `T[N]` implicitly converts to `T*` | Loses array length `N`; avoided by `sizeof`, `&arr`, or `T (&)[N]` |
+| `int* p[4];` | Array of 4 `int*` pointers | `[]` has higher precedence than `*`; each element is a pointer |
+| `int (*p)[4];` | Pointer to an `int[4]` array | Parentheses bind `*` first; `p` points to a whole 4-element array |
+| `int (&ref)[4];` | Reference bound to an `int[4]` array | Alias for an `int[4]` array; retains length `4` without decay |
+| `int& arr[4];` | Array of references (illegal) | Ill-formed: array elements must be objects, references are not |

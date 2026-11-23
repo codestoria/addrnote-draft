@@ -155,7 +155,7 @@ flowchart TD
     START["Passing parameter of type T to a function"]
     Q1{"Does the function need<br/>to modify the caller's object?"}
     Q2{"Can the argument<br/>be missing (null)?"}
-    Q3{"Is T cheap to copy?<br/>(e.g., int, double, std::string_view)"}
+    Q3{"Is T cheap to copy?<br/>(e.g., int, double, char)"}
 
     START --> Q1
     Q1 -- Yes --> Q2
@@ -372,18 +372,23 @@ Local variables have **automatic storage duration** and are destroyed as soon as
 ### Pitfall 2 — Lifetime extension does not cross function return boundaries
 
 ::: warning Subtle lifetime trap
-While binding a local `const T&` directly to a temporary extends that temporary's lifetime to the end of the local scope, **returning a reference to a temporary — or passing a temporary through a helper function that returns `const T&` — does not extend its lifetime**:
+While binding a `const T&` directly to a temporary extends that temporary's lifetime to the end of that reference's scope, **returning a reference to a temporary — or passing a temporary through a helper function that returns `const T&` — does not extend its lifetime**:
 
 ```cpp
+#include <string>
+
 const std::string& dangerous_forward(const std::string& s) {
     return s;  // Returns reference to whatever 's' bound to
 }
 
-// Temporary std::string("temp") is destroyed at the semicolon!
-const std::string& dangling = dangerous_forward(std::string("temp"));
+void demo() {
+    // Temporary std::string("temp") is destroyed at the semicolon!
+    const std::string& dangling = dangerous_forward(std::string("temp"));
+    // Using 'dangling' here reads a destroyed object (undefined behavior).
+}
 ```
 
-By the time `dangling` is used on the next line, the temporary `std::string` has already been destroyed.
+By the time `dangling` is used after the call, the temporary `std::string` has already been destroyed.
 :::
 
 ### Pitfall 3 — Leaving raw pointers uninitialized
@@ -530,7 +535,7 @@ Output:
 | `void f(T x)` | Pass by value | Copies/moves argument; best for small, cheap types |
 | `void f(const T& x)` | Pass by `const` reference | Zero-copy read-only view; accepts lvalues and temporaries |
 | `void f(T& x)` | Pass by mutable reference | Zero-copy in-place modification; requires a non-const lvalue |
-| `void f(T* p)` | Pass by pointer | Allows `nullptr` (optional target) or pointer arithmetic |
+| `void f(T* p)` | Pass by pointer | Allows `nullptr` (optional target) or rebinding to another object |
 | Array decay (`arr` → `&arr[0]`) | `T[N]` implicitly converts to `T*` | Loses array length `N`; avoided by `sizeof`, `&arr`, or `T (&)[N]` |
 | `int* p[4];` | Array of 4 `int*` pointers | `[]` has higher precedence than `*`; each element is a pointer |
 | `int (*p)[4];` | Pointer to an `int[4]` array | Parentheses bind `*` first; `p` points to a whole 4-element array |
