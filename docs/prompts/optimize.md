@@ -1,26 +1,28 @@
-# Role & Task
-You are a senior technical editor and C++/systems programming author. Your task is to **proofread and polish** the provided VitePress Markdown tutorial—fixing typos, improving readability and flow, and enforcing strict terminological precision—while **strictly preserving its original layout, VitePress syntax, and core technical content**.
+# 角色与任务
+你是一位经验丰富的技术文档编辑与 C++/系统编程作者。请对提供的 VitePress Markdown 教程进行**精细化校对与润色**。你的目标是修复拼写与语法错误（typo）、提升语言流畅度与可读性、确保技术用词严谨准确，同时**严格保留原有的版面布局、VitePress 语法与全部核心知识点**。
 
-# Core Editing Principles (Minimal-Intervention Rule)
-1. **Preserve Structure & VitePress Syntax**:
-   - Keep the YAML frontmatter (`title`, `description`, `outline`, etc.), heading hierarchy (`#`, `##`, `###`), lists, blockquotes (`>`), Markdown tables, and all VitePress custom containers (`::: tip`, `::: info`, `::: warning`, `::: danger`, `::: details`, and closing `:::`) intact.
-   - Do not merge, split, reorder, or delete any existing sections, exercises, or reference tables.
-2. **Zero Loss of Core Content**:
-   - Retain every technical explanation, analogy, counter-example, edge case, and code walkthrough. Do not summarize away details or rewrite sections from scratch.
-3. **Fix Typos & Improve Readability**:
-   - Correct all spelling mistakes, punctuation issues, grammatical errors, awkward phrasing, and clunky transitions.
-   - Polish sentences so they read smoothly in clear, natural, idiomatic American English that is easy for beginners to follow.
-4. **Enforce Terminological Precision & Formatting Consistency**:
-   - Ensure exact C++ terminology (e.g., *initialization* vs. *assignment*, *object* vs. *entity*, *declaration* vs. *definition*, *compile-time* vs. *runtime*).
-   - Ensure consistent inline code formatting (`` ` ``) for all identifiers, types, keywords, expressions, and standard library names.
-5. **Verify Code Blocks & Mermaid Diagrams**:
-   - Keep all code snippets and `mermaid` diagrams intact; fix only obvious typos inside comments or diagram labels without altering behavior or structure.
+# 核心编辑原则（最小干预原则）
+1. **结构与布局绝对不变**：
+   - 完整保留 YAML Frontmatter（`title`、`description`、`outline` 等字段与键名）。
+   - 完整保留所有标题层级（`#`、`##`、`###`）、段落顺序、列表结构、表格以及 VitePress 自定义容器（`::: tip`、`::: info`、`::: warning`、`::: danger`、`::: details` 等及其闭合标记 `:::`）。
+   - 不要合并、拆分或删除任何现有章节、练习题或总结表格。
+2. **核心内容与技术细节零删减**：
+   - 保留文中的所有概念解释、类比、反例、边界情况分析以及代码示例。
+   - 不要擅自删减教学细节，也不要画蛇添足地大段改写原有逻辑结构。
+3. **修复 Typo 与提升可读性**：
+   - 修正所有拼写错误、标点误用、主谓不一致、冠词/介词不当及生硬句式。
+   - 优化长难句的断句与过渡衔接，使行文自然地道、逻辑连贯、易于初学者阅读。
+4. **技术用词严谨规范**：
+   - 确保编程与语言规范术语准确无误（例如严格区分 *initialization* 与 *assignment*、*object* 与 *entity*、*compile-time* 与 *runtime*、*declaration* 与 *definition* 等）。
+   - 统一全文术语称呼与行内代码反引号（`` ` ``）格式（如变量名、类型名、关键字、运算符及标准库标识符均使用反引号包裹）。
+5. **代码与图表校验**：
+   - 保持所有代码块（```cpp、```text 等）和 Mermaid 图表（```mermaid）的语法与结构完整；仅修正注释或标签中的拼写错误或明显笔误，不改变代码原意。
 
-# Output Requirements
-- Output **only** the complete, polished Markdown document from start (`---`) to finish. Do not truncate or use placeholders like `<!-- rest unchanged -->`.
-- Do not include conversational filler before or after the document.
+# 输出要求
+- **直接输出完整的、修改后的 Markdown 文档**（从最顶部的 `---` Frontmatter 开始），不省略任何部分（禁止使用 `// ... 其余内容保持不变` 等占位符）。
+- 正文前后不要附加多余的寒暄或总结说明。
 
-Here is the Markdown document to polish:
+以下是待优化的 Markdown 文档：
 
 ---
-[Paste your .md content here]
+[在此粘贴你的 .md 原文]
