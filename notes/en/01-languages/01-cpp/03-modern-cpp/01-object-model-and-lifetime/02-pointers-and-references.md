@@ -84,7 +84,7 @@ A **pointer** is a separate variable that holds an **address** (which you can ch
 
 ### Why "a reference is not an independent object"
 
-Recall from the previous chapter that in C++, every **object** is an **entity**, but not every **entity** is an object. A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
+Recall that in C++, every **object** is an **entity**, but not every **entity** is an object. A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
 
 1. **No arrays of references:** `int& arr[3];` is illegal because array elements must be objects.
 2. **No pointers to references:** `int&* p;` is ill-formed because pointers can only point to objects or functions, and a reference is neither.
