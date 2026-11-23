@@ -4,7 +4,7 @@ description: Understand C++ value categories — lvalues, prvalues, and xvalues 
 outline: deep
 ---
 
-# Expressions and Value Categories: lvalues, rvalues, prvalues, and xvalues
+# Expressions and Value Categories: lvalues, prvalues, and xvalues
 
 ::: tip What you'll learn
 * Why every C++ expression carries **two independent attributes**: a **type** and a **value category**
