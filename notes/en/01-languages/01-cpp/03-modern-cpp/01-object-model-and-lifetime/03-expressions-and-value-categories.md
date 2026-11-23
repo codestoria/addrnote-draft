@@ -132,8 +132,8 @@ flowchart LR
 
 Because some C++ rules care only about *identity* while others care only about *movability*, the standard groups these three into **two overlapping umbrella categories**:
 
-* **glvalue** = `lvalue` $\cup$ `xvalue` (everything that has **identity**).
-* **rvalue** = `prvalue` $\cup$ `xvalue` (everything that is **movable**).
+* **glvalue** = `lvalue` ∪ `xvalue` (everything that has **identity**).
+* **rvalue** = `prvalue` ∪ `xvalue` (everything that is **movable**).
 
 Notice that **`xvalue` sits in the overlap**: it has identity like an `lvalue`, but permission to be moved from like a `prvalue`.
 
