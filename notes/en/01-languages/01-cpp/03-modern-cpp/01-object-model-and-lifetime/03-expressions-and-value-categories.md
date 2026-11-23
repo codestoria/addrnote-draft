@@ -75,7 +75,7 @@ Whenever the C++ compiler analyzes an expression, it tracks **two completely sep
 ::: warning Crucial rule: Expressions never have reference types
 If you declare `int& ref = a;` or `int&& rref = 42;`, the **variables** `ref` and `rref` have reference types (`int&` and `int&&`). However, as soon as you use `ref` or `rref` in an expression, C++ strips the reference from the expression's type before doing anything else.
 
-Both the expression `ref` and the expression `rref` have the non-reference **type `int**`. What distinguishes them from `42` is their **value category**.
+Both the expression `ref` and the expression `rref` have the non-reference **type** `int`. What distinguishes them from `42` is their **value category**.
 :::
 
 ### Two questions that classify every expression
