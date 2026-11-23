@@ -371,7 +371,6 @@ int main() {
 ### Solutions
 
 ::: details Exercise 1 — compilation and explanation
-
 - **(1) Fails to compile:** `p1` points to `const int`, so `*p1` cannot be assigned to.
 - **(2) Compiles:** `p1` is not a `const` pointer; it can be reassigned to point to `b`.
 - **(3) Compiles:** `p2` is a `const` pointer to a non-`const` `int`, so modifying `*p2` is allowed.
@@ -379,7 +378,6 @@ int main() {
 :::
 
 ::: details Exercise 2 — output of the snippet
-
 Output:
 
 ```text
@@ -390,7 +388,6 @@ Even though `ptr` points to `const int`, `value` itself was defined as a non-`co
 :::
 
 ::: details Exercise 3 — matching declarations
-
 - **(a)** `const int* p` (low-level `const` only)
 - **(b)** `const int* const p` (both low-level and top-level `const`)
 - **(c)** `int* const p` (top-level `const` only)
