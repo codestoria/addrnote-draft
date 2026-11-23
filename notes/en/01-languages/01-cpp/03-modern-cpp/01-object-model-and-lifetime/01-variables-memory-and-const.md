@@ -63,7 +63,7 @@ three distinct concepts come into play:
    - **Size:** How many bytes that storage occupies (for example, `sizeof(int)` is commonly `4` bytes on desktop platforms).
    - **Alignment:** A rule stating that the object's address must be a multiple of a certain byte boundary (for example, a 4-byte `int` often prefers or requires an address divisible by `4`) so hardware can read and write it efficiently.
 
-Think of a type as the **blueprint/rulebook** and the memory space as the **physical storage** where bytes live. In later chapters, you will also see how **storage duration** (when raw bytes are allocated and reclaimed) differs from **object lifetime** (when a valid, initialized object actually exists in those bytes) — for now, we focus on how names, types, and `const` govern reading and writing.
+Think of a type as the **blueprint/rulebook** and the memory space as the **physical storage** where bytes live. Later on, you will also see how **storage duration** (when raw bytes are allocated and reclaimed) differs from **object lifetime** (when a valid, initialized object actually exists in those bytes) — for now, we focus on how names, types, and `const` govern reading and writing.
 
 ### The intuition, in one sentence
 
