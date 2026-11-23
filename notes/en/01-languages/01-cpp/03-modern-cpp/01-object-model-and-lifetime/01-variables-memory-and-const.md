@@ -286,7 +286,7 @@ int main() {
 ### Pitfall 1 — Treating a `const` view as unchangeable memory
 
 ::: danger False
-If you have `const int* p = &x;` where `x` is a non-`const` `int`, `x` can still be modified through `x` (or another non-`const` pointer). `const` on `p` restricts *you when using `p`*; it does not make `x`'s bytes read-only in hardware.
+If you have `const int* p = &x;` where `x` is a non-`const` `int`, `x` can still be modified through `x` (or another non-`const` pointer). `const` on `p` restricts *you when using* `p`; it does not make `x`'s bytes read-only in hardware.
 :::
 
 ### Pitfall 2 — Confusing `const int*` and `int* const`
