@@ -462,7 +462,7 @@ User(std::string&& name)
 | `x` (variable name) | lvalue | ✅ | ❌ | ✅ | `T&` |
 | `ref` (`int&` variable) | lvalue | ✅ | ❌ | ✅ | `T&` |
 | `rref` (`int&&` variable) | lvalue | ✅ | ❌ | ✅ | `T&` |
-| `"hello"` (string literal) | lvalue | ✅ | ❌ | ✅ | `const T&` |
+| `"hello"` (string literal) | lvalue | ✅ | ❌ | ✅ | `T&` (`const char(&)[6]`) |
 | `++x` (built-in prefix) | lvalue | ✅ | ❌ | ✅ | `T&` |
 | `x++` (built-in postfix) | prvalue | ❌ | ✅ | ❌ | `T&&` |
 | `42` (non-string literal) | prvalue | ❌ | ✅ | ❌ | `T&&` |
