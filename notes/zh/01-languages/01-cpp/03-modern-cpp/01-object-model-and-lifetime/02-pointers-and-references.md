@@ -65,7 +65,6 @@ flowchart LR
 
     class X,P obj
     class R alias
-
 ```
 
 ### The intuition, in one sentence
@@ -125,7 +124,6 @@ int value = 10;
 int* ptr = &value;  // ptr stores the address of value
 
 *ptr = 25;          // dereferences ptr to modify value
-
 ```
 
 * **Address-of (`&value`):** Produces a pointer of type `int*` holding the starting address of `value`.
@@ -140,7 +138,6 @@ int value = 10;
 int& ref = value;   // ref is an lvalue reference bound to value
 
 ref = 30;           // assigns 30 to value; ref remains bound to value
-
 ```
 
 Three core rules govern reference binding:
@@ -168,7 +165,6 @@ flowchart TD
     Q1 -- No --> Q3
     Q3 -- Yes --> VAL["Pass by value: T"]
     Q3 -- No --> CREF["Pass by const reference: const T&"]
-
 ```
 
 * **Pass by value (`void f(BigObj x)`):** Constructs a new `BigObj` parameter inside `f` from the caller's argument. Mutating `x` affects only `f`'s local parameter.
@@ -187,7 +183,6 @@ void inspect(int* p) {
     // sizeof(p) is sizeof(int*) (typically 8 bytes on 64-bit systems),
     // NOT 4 * sizeof(int).
 }
-
 ```
 
 Why does this happen? For compatibility with C, C++ does not copy entire built-in arrays by value when passing them to functions; instead, it passes the address of element `0`. Because a raw pointer `T*` carries no length metadata, you must pass the element count explicitly (`std::size_t n`) or use modern wrappers such as `std::array<T, N>` or `std::span<T>`.
@@ -215,7 +210,6 @@ int main() {
     std::cout << "sizeof(alias)    = " << sizeof(alias) << " bytes\n";
     std::cout << "sizeof(pointer)  = " << sizeof(pointer) << " bytes\n";
 }
-
 ```
 
 **What this demonstrates:**
@@ -243,7 +237,6 @@ int main() {
     std::cout << "a = " << a << ", ref = " << ref << '\n';
     std::cout << "b = " << b << ", *ptr = " << *ptr << '\n';
 }
-
 ```
 
 **Output:**
@@ -251,7 +244,6 @@ int main() {
 ```text
 a = 99, ref = 99
 b = 20, *ptr = 20
-
 ```
 
 Setting `a = 99` updates `ref` (`99`) because `ref` is still bound to `a`, while `*ptr` remains `20` because `ptr` was re-aimed at `b`.
@@ -293,7 +285,6 @@ int main() {
     award_bonus(user, 25);                       // Mutates 'user.score' in place
     std::cout << "after award_bonus:   score = " << user.score << '\n';
 }
-
 ```
 
 **Output:**
@@ -304,7 +295,6 @@ after show_by_value: score = 50
 [by const&] inside: Maya (50)
 [by const&] inside: Guest (10)
 after award_bonus:   score = 75
-
 ```
 
 ### Step 4 — Observe array decay and how to preserve array size
@@ -332,7 +322,6 @@ int main() {
     print_elements(scores, 4);    // Decays to const int*
     print_exact_four(scores);     // No decay: binds directly to int[4]
 }
-
 ```
 
 ::: tip Key insight
@@ -372,7 +361,6 @@ const std::string& dangerous_forward(const std::string& s) {
 
 // Temporary std::string("temp") is destroyed at the semicolon!
 const std::string& dangling = dangerous_forward(std::string("temp"));
-
 ```
 
 By the time `dangling` is used on the next line, the temporary `std::string` has already been destroyed.
@@ -385,7 +373,6 @@ By the time `dangling` is used on the next line, the temporary `std::string` has
 ```cpp
 int* p;      // Uninitialized: holds an indeterminate address
 *p = 42;     // Undefined behavior (often a segmentation fault or silent corruption)
-
 ```
 
 Unlike references, the compiler does not force you to initialize a pointer. Always initialize every pointer either to a valid object's address (`&x`) or explicitly to `nullptr`, and check `if (p != nullptr)` before dereferencing when null is possible.
@@ -400,7 +387,6 @@ int x = 1;
 int y = 2;
 int& ref = x;
 ref = y;  // Does NOT make 'ref' point to 'y'! Sets x = 2.
-
 ```
 
 Once initialized, a reference is permanently bound to `x`. Writing `ref = y;` performs value assignment on `x`, leaving `ref` bound to `x`.
@@ -414,7 +400,6 @@ Once initialized, a reference is permanently bound to `x`. Writing `ref = y;` pe
 void increment(int& x) { ++x; }
 
 increment(5);  // Compiler error: cannot bind non-const lvalue reference to an rvalue
-
 ```
 
 C++ forbids binding `T&` to a temporary (`5`) because mutating an anonymous value that is about to vanish is almost always a bug. If the function only needs to read the value, change the parameter to `const int&` (or `int` for small types).
@@ -446,7 +431,6 @@ int main() {
 
     std::cout << a << " " << b << " " << r << '\n';
 }
-
 ```
 
 **Exercise 2.** For each function call below, state whether it **compiles** or **fails to compile**, and explain why:
@@ -466,7 +450,6 @@ int main() {
     mutate(ctext);              // (5)
     mutate("literal");          // (6)
 }
-
 ```
 
 **Exercise 3.** On a 64-bit platform where `sizeof(double) == 8` and `sizeof(void*) == 8`, what are the values of `sizeof(arr)`, `sizeof(ref)`, and `sizeof(ptr)`?
@@ -475,7 +458,6 @@ int main() {
 double arr[5] = {1.0, 2.0, 3.0, 4.0, 5.0};
 double& ref = arr[0];
 double* ptr = arr;
-
 ```
 
 ### Solutions
@@ -486,7 +468,6 @@ Output:
 
 ```text
 10 30 10
-
 ```
 
 * `r` is bound to `a`, so `r = b;` assigns `10` to `a`.
