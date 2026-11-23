@@ -25,18 +25,18 @@ Problems appear as soon as your programs grow:
 2. **Mutating caller state:** A function often needs to update an existing variable in the caller's scope rather than modify a throwaway local copy.
 3. **Optional or reseatable targets:** Sometimes code needs to represent "no target available" (`nullptr`) or switch which object it points to over time; other times, an API wants a guarantee that a valid object is already bound.
 
-C++ provides two primary indirection mechanisms to solve these problems: **pointers** and **references**. Understanding how they work—and why they behave differently—is essential before moving on to object lifetimes, value categories, move semantics, and templates.
+C++ provides two primary indirection mechanisms to solve these problems: **pointers** and **references**. Understanding how they work — and why they behave differently — is essential before moving on to object lifetimes, value categories, move semantics, and templates.
 
 ::: tip When this matters most
 Passing non-trivial objects to functions, modifying caller data cleanly, building linked data structures (trees, graphs, intrusive lists), working with C APIs or optional targets, and preparing for rvalue references and `decltype`.
 :::
 
 ::: info When you can ignore it
-Small, trivially copyable types (such as `int`, `double`, `char`, or tiny structs) passed to pure functions that do not need to mutate the caller's argument—though even there, knowing how references bind prevents subtle bugs.
+Small, trivially copyable types (such as `int`, `double`, `char`, or tiny structs) passed to pure functions that do not need to mutate the caller's argument — though even there, knowing how references bind prevents subtle bugs.
 :::
 
 ::: danger First, unlearn the "second variable" myth
-A **reference** is **not** a separate variable that secretly holds a pointer you can inspect or re-aim. In C++, a reference is an **alias**—another name bound directly to an existing object. Treating a reference as a standalone data object will trip you up on `&`, `sizeof`, lifetime, and later topics such as value categories and `decltype`.
+A **reference** is **not** a separate variable that secretly holds a pointer you can inspect or re-aim. In C++, a reference is an **alias** — another name bound directly to an existing object. Treating a reference as a standalone data object will trip you up on `&`, `sizeof`, lifetime, and later topics such as value categories and `decltype`.
 :::
 
 ## Core Idea & Intuition
@@ -76,7 +76,7 @@ A **pointer** is a separate variable that holds an **address** (which you can ch
 | Property | Pointer (`T*`) | Reference (`T&`) |
 | --- | --- | --- |
 | **What it is in C++** | A standalone object holding a memory address (or `nullptr`) | An entity that acts as an alias for an existing object |
-| **Must initialize on creation?** | No (but uninitialized pointers hold garbage addresses—dangerous!) | Yes (must bind to a valid object or function when defined) |
+| **Must initialize on creation?** | No (but uninitialized pointers hold garbage addresses — dangerous!) | Yes (must bind to a valid object or function when defined) |
 | **Can rebind to another object?** | Yes (`ptr = &other;`) | No (`ref = other;` assigns to the *referenced object*, not rebinding `ref`) |
 | **Can be null (`nullptr`)?** | Yes | No (in well-defined C++, a reference always refers to a valid target) |
 | **Has its own address (`&`)?** | Yes (`&ptr` is the address of the pointer variable itself) | No (`&ref` yields the address of the *referenced object*) |
@@ -104,7 +104,7 @@ By contrast, a **pointer** (`int* ptr = &x;`) is a **sticky note** with `x`'s st
 :::
 
 ::: warning Where the analogy breaks
-At the machine-code level, a compiler often implements a reference *under the hood* using a CPU register or a hidden memory address—especially when passing a reference across function boundaries. However, **compiler implementation is not language semantics**. At the C++ language level, a reference cannot be null, cannot be reseated, and does not support pointer arithmetic (`++ref` increments the *referenced value*, whereas `++ptr` advances the *pointer address*).
+At the machine-code level, a compiler often implements a reference *under the hood* using a CPU register or a hidden memory address — especially when passing a reference across function boundaries. However, **compiler implementation is not language semantics**. At the C++ language level, a reference cannot be null, cannot be reseated, and does not support pointer arithmetic (`++ref` increments the *referenced value*, whereas `++ptr` advances the *pointer address*).
 :::
 
 ### When to choose `const T&`, `T&`, or `T*`
@@ -173,9 +173,9 @@ flowchart TD
 
 ### Array-to-pointer decay
 
-In C++, a built-in array's type includes both its element type and its fixed length—for example, `int arr[4]` has type `int[4]`, and `sizeof(arr)` equals `4 * sizeof(int)`.
+In C++, a built-in array's type includes both its element type and its fixed length — for example, `int arr[4]` has type `int[4]`, and `sizeof(arr)` equals `4 * sizeof(int)`.
 
-However, whenever an array is used in most value expressions—including passing `arr` to a function parameter declared as `int*` or `int arr[]`—it undergoes **array-to-pointer decay**: it implicitly converts to a pointer to its first element (`&arr[0]`, of type `int*`).
+However, whenever an array is used in most value expressions — including passing `arr` to a function parameter declared as `int*` or `int arr[]` — it undergoes **array-to-pointer decay**: it implicitly converts to a pointer to its first element (`&arr[0]`, of type `int*`).
 
 ```cpp
 void inspect(int* p) {
@@ -352,7 +352,7 @@ Local variables have **automatic storage duration** and are destroyed as soon as
 ### Pitfall 2 — Lifetime extension does not cross function return boundaries
 
 ::: warning Subtle lifetime trap
-While binding a local `const T&` directly to a temporary extends that temporary's lifetime to the end of the local scope, **returning a reference to a temporary—or passing a temporary through a helper function that returns `const T&`—does not extend its lifetime**:
+While binding a local `const T&` directly to a temporary extends that temporary's lifetime to the end of the local scope, **returning a reference to a temporary — or passing a temporary through a helper function that returns `const T&` — does not extend its lifetime**:
 
 ```cpp
 const std::string& dangerous_forward(const std::string& s) {
