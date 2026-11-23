@@ -187,6 +187,27 @@ void inspect(int* p) {
 
 Why does this happen? For compatibility with C, C++ does not copy entire built-in arrays by value when passing them to functions; instead, it passes the address of element `0`. Because a raw pointer `T*` carries no length metadata, you must pass the element count explicitly (`std::size_t n`) or use modern wrappers such as `std::array<T, N>` or `std::span<T>`.
 
+### Combining arrays, pointers, and references: reading the declarations
+
+Because `[]` has higher precedence than `*` and `&`, parentheses change what the declaration means:
+
+```cpp
+int a = 1, b = 2, c = 3, d = 4;
+int raw[4] = {a, b, c, d};
+
+int* ptr_arr[4] = {&a, &b, &c, &d};  // Array of 4 pointers to int
+int (*arr_ptr)[4] = &raw;            // Pointer to an int[4] array
+int (&arr_ref)[4] = raw;             // Reference bound to an int[4] array
+// int& ref_arr[4];                  // Illegal: array of references is not allowed
+```
+
+| Declaration | What It Actually Is | Key Note |
+| --- | --- | --- |
+| `int* p[4];` | **Array of pointers:** an array of 4 `int*` elements | `[]` binds before `*`; each element can point elsewhere or be `nullptr` |
+| `int (*p)[4];` | **Pointer to array:** a single pointer to an `int[4]` | Parentheses group `*p` first; `p + 1` advances by `sizeof(int[4])` |
+| `int (&ref)[4];` | **Reference to array:** an alias bound to an `int[4]` | Preserves exact array length `4` and avoids array decay |
+| `int& arr[4];` | **Array of references (illegal)** | Array elements must be objects; references are not objects |
+
 ## Step-by-Step Example
 
 Let's walk through four focused examples that verify every concept above in runnable code.
@@ -501,7 +522,8 @@ Output:
 * A **reference** (`T&`) is an **alias** (an entity, not a separate data object) that must be bound to a valid target at creation and can never be reseated.
 * `&ref` yields the address of the bound object, and `sizeof(ref)` yields `sizeof(T)`.
 * Prefer **pass-by-value** for small, cheap-to-copy types, **`const T&`** for read-only access to larger types or temporaries, **`T&`** for mandatory in-place mutation, and **`T*`** when `nullptr` or rebinding is needed.
-* Built-in arrays implicitly **decay** to a pointer to their first element in most expressions, losing their length information unless passed explicitly or wrapped in `std::array` / `std::span`.
+* Built-in arrays implicitly **decay** to a pointer to their first element in most expressions, losing their length information unless passed explicitly, bound via `int (&ref)[4]`, or wrapped in `std::array` / `std::span`.
+* Pay attention to declaration grouping: `int* p[4]` is an array of pointers, `int (*p)[4]` is a pointer to an `int[4]` array, `int (&ref)[4]` is a reference to an `int[4]` array, and `int& arr[4]` is ill-formed because references are not objects.
 * Never return a pointer or reference to a local variable whose lifetime ends when the function returns.
 
 ## Quick Reference
