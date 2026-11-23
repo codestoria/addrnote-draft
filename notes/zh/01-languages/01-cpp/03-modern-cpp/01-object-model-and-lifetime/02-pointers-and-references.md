@@ -88,7 +88,7 @@ A **pointer** is a separate variable that holds an **address** (which you can ch
 Recall from the previous chapter that in C++, every **object** is an **entity**, but not every **entity** is an object. A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
 
 1. **No arrays of references:** `int& arr[3];` is illegal because array elements must be objects.
-2. **No pointers to references:** `int&* p;` is illegal because pointers only point to objects or functions.
+2. **No pointers to references:** `int&* p;` is ill-formed because pointers can only point to objects or functions, and a reference is neither.
 3. **`&ref` returns the target's address:** Taking the address of a reference asks "where does the bound object live?", not "where does the alias live?"
 4. **`sizeof(ref)` returns `sizeof(T)`:** Asking for the size of a reference reports the size of the referenced type `T` (for example, `sizeof(int)`), not `sizeof(void*)`.
 
@@ -348,14 +348,13 @@ Array-to-pointer decay does **not** occur when an array is the operand of `sizeo
 ```cpp
 int& bad_ref() {
     int local = 10;
-    return local;  // Error/UB: 'local' is destroyed when bad_ref() exits!
+    return local;  // UB: 'local' is destroyed when bad_ref() exits!
 }
 
 int* bad_ptr() {
     int local = 10;
     return &local;  // UB: returned address points to reclaimed stack storage
 }
-
 ```
 
 Local variables have **automatic storage duration** and are destroyed as soon as their enclosing function returns. Returning a reference or pointer to `local` leaves the caller holding a dangling alias or address. Return by value instead (`int good() { int local = 10; return local; }`).
@@ -533,4 +532,4 @@ Output:
 | `void f(const T& x)` | Pass by `const` reference | Zero-copy read-only view; accepts lvalues and temporaries |
 | `void f(T& x)` | Pass by mutable reference | Zero-copy in-place modification; requires a non-const lvalue |
 | `void f(T* p)` | Pass by pointer | Allows `nullptr` (optional target) or pointer arithmetic |
-| Array decay (`arr` $\to$ `&arr[0]`) | `T[N]` implicitly converts to `T*` | Loses array length `N`; avoided by `sizeof`, `&arr`, or `T (&)[N]` |
+| Array decay (`arr` → `&arr[0]`) | `T[N]` implicitly converts to `T*` | Loses array length `N`; avoided by `sizeof`, `&arr`, or `T (&)[N]` |
