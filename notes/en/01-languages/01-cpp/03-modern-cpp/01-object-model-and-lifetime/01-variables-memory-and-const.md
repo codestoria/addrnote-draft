@@ -201,7 +201,7 @@ int main() {
 
 - `sizeof(x)` reports how many bytes the object `x` occupies.
 - `alignof(x)` reports the alignment requirement of `x`'s type (`int`).
-- `&x` gets the address of `x`, and casting to `const void*` ensures `std::cout` prints it as a memory address rather than treating `char*` specially (a good habit in general).
+- `&x` obtains the address of `x`. Casting to `const void*` ensures `std::cout` prints it as a raw memory address. This avoids implicit conversion to `const char*`, which would mistakenly interpret the pointer as a C-style string.
 
 ### Step 2 — see how a pointer is its own object with its own address
 
