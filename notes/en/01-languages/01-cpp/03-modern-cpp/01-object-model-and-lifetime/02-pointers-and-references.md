@@ -86,7 +86,7 @@ A **pointer** is a separate variable that holds an **address** (which you can ch
 
 Recall that in C++, every **object** is an **entity**, but not every **entity** is an object. A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
 
-1. **No arrays of references:** `int& arr[3];` is illegal because array elements must be objects.
+1. **No arrays of references:** `int& arr[4];` is illegal because array elements must be objects, and references are not objects (unlike a reference to an array, `int (&ref)[4]`, which binds to an existing `int[4]` array).
 2. **No pointers to references:** `int&* p;` is ill-formed because pointers can only point to objects or functions, and a reference is neither.
 3. **`&ref` returns the target's address:** Taking the address of a reference asks "where does the bound object live?", not "where does the alias live?"
 4. **`sizeof(ref)` returns `sizeof(T)`:** Asking for the size of a reference reports the size of the referenced type `T` (for example, `sizeof(int)`), not `sizeof(void*)`.
