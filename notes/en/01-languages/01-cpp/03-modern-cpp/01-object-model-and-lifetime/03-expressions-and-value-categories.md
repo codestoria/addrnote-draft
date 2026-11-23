@@ -474,11 +474,3 @@ User(std::string&& name)
 | `static_cast<T&&>(x)` | xvalue | ✅ | ✅ | ❌ | `T&&` |
 | `obj.m` (`obj` is lvalue) | lvalue | ✅ | ❌ | ✅ | `T&` |
 | `obj.m` (`obj` is rvalue) | xvalue | ✅ | ✅ | ❌ | `T&&` |
-
-## Bridge to Lifetime: "Movable" Does Not Mean "Still Alive"
-
-Value categories tell you **how an expression may be used** (whether it has identity, and whether its resources are permitted to be moved from) — they do **not** tell you whether the underlying object is still alive:
-
-* **Movable (`xvalue` / `prvalue`) is not the same as alive:** If a local object has already gone out of scope or been destroyed, turning it into an `xvalue` (`std::move(...)`) does not bring a dead object back to life.
-* **`std::move` does not end lifetime:** Calling `std::move(x)` only produces an `xvalue` view; `x` remains alive in a valid-but-unspecified state until its own lifetime/scope ends and its destructor runs.
-* **Next up — when temporaries are born and destroyed:** Expressions frequently produce temporaries (`prvalue`s and materialized temporaries), and `const T&` / `T&&` interact with their lifespans. In the next chapter, we examine **storage duration, object lifetime, copy elision, and dangling references**.
