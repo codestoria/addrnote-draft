@@ -152,35 +152,35 @@ An `xvalue` does **not** automatically destroy or empty the object. Putting an "
 
 Before writing code, let's see how common C++ expressions map onto the three categories — and *why*.
 
-### 1. Literals (`42`, `3.14`, `true`, `nullptr`) $\rightarrow$ **prvalue**
+### 1. Literals (`42`, `3.14`, `true`, `nullptr`) → **prvalue**
 
 Numeric, boolean, and pointer literals represent pure values baked into instructions. They do not occupy addressable objects in memory, so they have no identity.
 
 *(Exception: String literals such as `"hello"` are stored in static read-only memory as `const char[6]` arrays, so `"hello"` is an **lvalue** — you can even write `&"hello"`.)*
 
-### 2. Variable names (`a`, `ref`, `rref`) $\rightarrow$ **lvalue**
+### 2. Variable names (`a`, `ref`, `rref`) → **lvalue**
 
 Any identifier naming a variable, function parameter, or function has a concrete address in memory and persists beyond the current expression. Even if the variable was declared as `int&& rref`, the expression `rref` has a name, so it has identity and is an **lvalue**.
 
-### 3. Built-in arithmetic (`a + b`, `a * 2`, `-a`) $\rightarrow$ **prvalue**
+### 3. Built-in arithmetic (`a + b`, `a * 2`, `-a`) → **prvalue**
 
 Adding `a` and `b` computes a brand-new result. That result is neither `a` nor `b`; it is a transient value with no name, hence a **prvalue**.
 
-### 4. Prefix vs. Postfix Increment (`++a` vs. `a++`) $\rightarrow$ **lvalue** vs. **prvalue**
+### 4. Prefix vs. Postfix Increment (`++a` vs. `a++`) → **lvalue** vs. **prvalue**
 
 This classic comparison makes the "identity" test crystal clear:
 
 * **`++a` (prefix)**: Increments `a` in place and returns `a` itself. Because the result *is* the identifiable object `a`, `++a` is an **lvalue** (`&(++a)` is valid!).
 * **`a++` (postfix)**: Saves a snapshot of `a`'s old value, increments `a`, and returns that temporary snapshot. Because the snapshot is a transient copy rather than `a` itself, `a++` is a **prvalue** (`&(a++)` fails to compile).
 
-### 5. Member access (`obj.member`) $\rightarrow$ inherits from `obj`
+### 5. Member access (`obj.member`) → inherits from `obj`
 
 When accessing a non-static data member `m` of an object `obj`:
 
 * If `obj` is an **lvalue** (e.g., `person.name`), `person.name` is an **lvalue** — `name` is part of an existing, persistent object.
 * If `obj` is an **rvalue** (e.g., `make_person().name` or `std::move(person).name`), the outer object is about to expire, so its subobject `name` is also expiring. Thus `obj.name` becomes an **xvalue**.
 
-### 6. `std::move(a)` and `static_cast<T&&>(a)` $\rightarrow$ **xvalue**
+### 6. `std::move(a)` and `static_cast<T&&>(a)` → **xvalue**
 
 `std::move(a)` does not execute any runtime instructions. Under the hood, it is literally a type cast: `static_cast<std::remove_reference_t<T>&&>(a)`. Casting an object to an rvalue reference tells the compiler: *"Keep pointing at `a`'s memory address (identity), but treat its resources as eligible for reuse (movable)."* That is exactly the definition of an **xvalue**.
 
@@ -424,9 +424,9 @@ L
 R
 ```
 
-1. `tag(v)` passes the named variable `v` (an **lvalue**), calling `tag(int&)` $\rightarrow$ prints `L`.
-2. `forward_attempt(2)` binds `param` to the prvalue `2`. Inside `forward_attempt`, `param` is a **named variable**, so `tag(param)` treats `param` as an **lvalue** and calls `tag(int&)` $\rightarrow$ prints `L`.
-3. `tag(std::move(param))` casts `param` to an **xvalue**, which is an rvalue, so it calls `tag(int&&)` $\rightarrow$ prints `R`.
+1. `tag(v)` passes the named variable `v` (an **lvalue**), calling `tag(int&)` → prints `L`.
+2. `forward_attempt(2)` binds `param` to the prvalue `2`. Inside `forward_attempt`, `param` is a **named variable**, so `tag(param)` treats `param` as an **lvalue** and calls `tag(int&)` → prints `L`.
+3. `tag(std::move(param))` casts `param` to an **xvalue**, which is an rvalue, so it calls `tag(int&&)` → prints `R`.
 :::
 
 ::: details Exercise 3 — Answers
@@ -444,8 +444,8 @@ User(std::string&& name)
 
 * Every C++ expression has **two independent attributes**: a non-reference **type** and a **value category** (`lvalue`, `prvalue`, or `xvalue`).
 * Classify any expression with **two questions**:
-1. Does it have **identity** (an identifiable memory address or function)? $\rightarrow$ **glvalue** (`lvalue` or `xvalue`).
-2. May its resources be **reused / moved from**? $\rightarrow$ **rvalue** (`prvalue` or `xvalue`).
+1. Does it have **identity** (an identifiable memory address or function)? → **glvalue** (`lvalue` or `xvalue`).
+2. May its resources be **reused / moved from**? → **rvalue** (`prvalue` or `xvalue`).
 
 
 * **lvalue**: has identity, not movable (`a`, `++a`, `arr[i]`, `"hello"`, and any named reference variable like `rref`).
