@@ -157,9 +157,9 @@ A classic reading rule helps: **read a type declaration from right to left**, st
 | --- | --- | --- | --- | --- |
 | `const int x = 1;` | No | N/A (not a pointer) | N/A | Top-level on `x` |
 | `int* p = &a;` | N/A | Yes | Yes | None |
-| `const int* p = &a;` | N/A | Yes | **No** | Low-level (on pointee) |
-| `int* const p = &a;` | N/A | **No** | Yes | Top-level (on `p`) |
-| `const int* const p = &a;` | N/A | **No** | **No** | Both low-level and top-level |
+| `const int* p = &a;` | N/A | Yes | No | Low-level (on pointee) |
+| `int* const p = &a;` | N/A | No | Yes | Top-level (on `p`) |
+| `const int* const p = &a;` | N/A | No | No | Both low-level and top-level |
 
 ### How `const` interacts with pointer operations
 
