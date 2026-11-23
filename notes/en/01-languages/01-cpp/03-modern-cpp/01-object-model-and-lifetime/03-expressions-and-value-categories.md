@@ -445,10 +445,8 @@ User(std::string&& name)
 
 * Every C++ expression has **two independent attributes**: a non-reference **type** and a **value category** (`lvalue`, `prvalue`, or `xvalue`).
 * Classify any expression with **two questions**:
-1. Does it have **identity** (an identifiable memory address or function)? → **glvalue** (`lvalue` or `xvalue`).
-2. May its resources be **reused / moved from**? → **rvalue** (`prvalue` or `xvalue`).
-
-
+  1. Does it have **identity** (an identifiable memory address or function)? → **glvalue** (`lvalue` or `xvalue`).
+  2. May its resources be **reused / moved from**? → **rvalue** (`prvalue` or `xvalue`).
 * **lvalue**: has identity, not movable (`a`, `++a`, `arr[i]`, `"hello"`, and any named reference variable like `rref`).
 * **prvalue**: no identity, movable (`42`, `a + b`, `a++`, functions returning by value).
 * **xvalue**: has identity *and* movable (`std::move(a)`, `static_cast<T&&>(a)`, member access on an rvalue).
