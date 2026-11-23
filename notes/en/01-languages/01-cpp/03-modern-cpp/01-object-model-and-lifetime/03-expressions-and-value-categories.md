@@ -1,6 +1,6 @@
 ---
 title: 'Expressions and Value Categories'
-description: Understand C++ value categories — lvalues, prvalues, and xvalues — from first principles, debunk old assignment myths, and see how C++ classifies expressions.
+description: Understand C++ value categories (lvalues, prvalues, and xvalues), debunk old assignment myths, and see how C++ classifies expressions.
 outline: deep
 ---
 
