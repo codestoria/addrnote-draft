@@ -25,7 +25,8 @@ Problems appear as soon as your programs grow:
 2. **Mutating caller state:** A function often needs to update an existing variable in the caller's scope rather than modify a throwaway local copy.
 3. **Optional or reseatable targets:** Sometimes code needs to represent "no target available" (`nullptr`) or switch which object it points to over time; other times, an API wants a guarantee that a valid object is already bound.
 
-C++ provides two primary indirection mechanisms to solve these problems: **pointers** and **references**. Understanding how they work — and why they behave differently — is essential before moving on to object lifetimes, value categories, move semantics, and templates.
+C++ provides two primary indirection mechanisms to solve these problems: **pointers** and **references**.
+Understanding how they work — and why they behave differently — is essential before moving on to object lifetimes, value categories, move semantics, and templates.
 
 ::: tip When this matters most
 Passing non-trivial objects to functions, modifying caller data cleanly, building linked data structures (trees, graphs, intrusive lists), working with C APIs or optional targets, and preparing for rvalue references and `decltype`.
@@ -36,7 +37,8 @@ Small, trivially copyable types (such as `int`, `double`, `char`, or tiny struct
 :::
 
 ::: danger First, unlearn the "second variable" myth
-A **reference** is **not** a separate variable that secretly holds a pointer you can inspect or re-aim. In C++, a reference is an **alias** — another name bound directly to an existing object. Treating a reference as a standalone data object will trip you up on `&`, `sizeof`, lifetime, and later topics such as value categories and `decltype`.
+A **reference** is **not** a separate variable that secretly holds a pointer you can inspect or re-aim. In C++, a reference is an **alias** — another name bound directly to an existing object.
+Treating a reference as a standalone data object will trip you up on `&`, `sizeof`, lifetime, and later topics such as value categories and `decltype`.
 :::
 
 ## Core Idea & Intuition
@@ -75,16 +77,17 @@ A **pointer** is a separate variable that holds an **address** (which you can ch
 
 | Property | Pointer (`T*`) | Reference (`T&`) |
 | --- | --- | --- |
-| **What it is in C++** | A standalone object holding a memory address (or `nullptr`) | An entity that acts as an alias for an existing object |
-| **Must initialize on creation?** | No (but uninitialized pointers hold garbage addresses — dangerous!) | Yes (must bind to a valid object or function when defined) |
-| **Can rebind to another object?** | Yes (`ptr = &other;`) | No (`ref = other;` assigns to the *referenced object*, not rebinding `ref`) |
-| **Can be null (`nullptr`)?** | Yes | No (in well-defined C++, a reference always refers to a valid target) |
-| **Has its own address (`&`)?** | Yes (`&ptr` is the address of the pointer variable itself) | No (`&ref` yields the address of the *referenced object*) |
-| **Access / member syntax** | `*ptr` to dereference; `ptr->member` for members | `ref` directly; `ref.member` for members |
+| What it is in C++ | A standalone object holding a memory address (or `nullptr`) | An entity that acts as an alias for an existing object |
+| Must initialize on creation? | No (but uninitialized pointers hold garbage addresses — dangerous!) | Yes (must bind to a valid object or function when defined) |
+| Can rebind to another object? | Yes (`ptr = &other;`) | No (`ref = other;` assigns to the *referenced object*, not rebinding `ref`) |
+| Can be null (`nullptr`)? | Yes | No (in well-defined C++, a reference always refers to a valid target) |
+| Independent storage address? | Yes (`&ptr` yields the pointer object's own address) | No (`&ref` yields the address of the *referenced object*) |
+| Access / member syntax | `*ptr` to dereference; `ptr->member` for members | `ref` directly; `ref.member` for members |
 
 ### Why "a reference is not an independent object"
 
-Recall that in C++, every **object** is an **entity**, but not every **entity** is an object. A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
+Recall that in C++, every **object** is an **entity**, but not every **entity** is an object.
+A reference is an **entity**, not an object with its own independent storage box. That single rule explains four otherwise surprising language restrictions:
 
 1. **No arrays of references:** `int& arr[4];` is illegal because array elements must be objects, and references are not objects (unlike a reference to an array, `int (&ref)[4]`, which binds to an existing `int[4]` array).
 2. **No pointers to references:** `int&* p;` is ill-formed because pointers can only point to objects or functions, and a reference is neither.
@@ -100,11 +103,13 @@ Imagine a house on Elm Street (`x`) that your family also calls "the lake house"
 - If you ask for the street address of "the lake house" (`&ref`), you get the exact same address as `&x`.
 - You cannot peel the nickname "the lake house" off that building and attach it to a different house down the road.
 
-By contrast, a **pointer** (`int* ptr = &x;`) is a **sticky note** with `x`'s street address written on it. The sticky note sits on your desk (it has its own location, `&ptr`), you can visit the house written on it (`*ptr`), or you can erase it and write a different house's address (`ptr = &y;`).
+By contrast, a **pointer** (`int* ptr = &x;`) is a **sticky note** with `x`'s street address written on it.
+The sticky note sits on your desk (it has its own location, `&ptr`), you can visit the house written on it (`*ptr`), or you can erase it and write a different house's address (`ptr = &y;`).
 :::
 
 ::: warning Where the analogy breaks
-At the machine-code level, a compiler often implements a reference *under the hood* using a CPU register or a hidden memory address — especially when passing a reference across function boundaries. However, **compiler implementation is not language semantics**. At the C++ language level, a reference cannot be null, cannot be reseated, and does not support pointer arithmetic (`++ref` increments the *referenced value*, whereas `++ptr` advances the *pointer address*).
+At the machine-code level, a compiler often implements a reference *under the hood* using a CPU register or a hidden memory address — especially when passing a reference across function boundaries. However, **compiler implementation is not language semantics**.
+At the C++ language level, a reference cannot be null, cannot be reseated, and does not support pointer arithmetic (`++ref` increments the *referenced value*, whereas `++ptr` advances the *pointer address*).
 :::
 
 ### When to choose `const T&`, `T&`, or `T*`
@@ -185,7 +190,8 @@ void inspect(int* p) {
 }
 ```
 
-Why does this happen? For compatibility with C, C++ does not copy entire built-in arrays by value when passing them to functions; instead, it passes the address of element `0`. Because a raw pointer `T*` carries no length metadata, you must pass the element count explicitly (`std::size_t n`) or use modern wrappers such as `std::array<T, N>` or `std::span<T>`.
+Why does this happen? For compatibility with C, C++ does not copy entire built-in arrays by value when passing them to functions; instead, it passes the address of element `0`.
+Because a raw pointer `T*` carries no length metadata, you must pass the element count explicitly (`std::size_t n`) or use modern wrappers such as `std::array<T, N>` or `std::span<T>`.
 
 ### Combining arrays, pointers, and references: reading the declarations
 
@@ -366,7 +372,9 @@ int* bad_ptr() {
 }
 ```
 
-Local variables have **automatic storage duration** and are destroyed as soon as their enclosing function returns. Returning a reference or pointer to `local` leaves the caller holding a dangling alias or address. Return by value instead (`int good() { int local = 10; return local; }`).
+Local variables have **automatic storage duration** and are destroyed as soon as their enclosing function returns.
+Returning a reference or pointer to `local` leaves the caller holding a dangling alias or address.
+Return by value instead (`int good() { int local = 10; return local; }`).
 :::
 
 ### Pitfall 2 — Lifetime extension does not cross function return boundaries
