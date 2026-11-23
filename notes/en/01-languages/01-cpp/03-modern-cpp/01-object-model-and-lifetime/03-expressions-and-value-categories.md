@@ -1,6 +1,6 @@
 ---
 title: 'Expressions and Value Categories'
-description: Understand C++ value categories — lvalues, prvalues, and xvalues — from first principles, break old assignment myths, and see how C++ routes expressions.
+description: Understand C++ value categories — lvalues, prvalues, and xvalues — from first principles, debunk old assignment myths, and see how C++ classifies expressions.
 outline: deep
 ---
 
@@ -73,7 +73,7 @@ Whenever the C++ compiler analyzes an expression, it tracks **two completely sep
 2. **Value Category** — How does this expression behave in terms of object identity and resource reusability? (`lvalue`, `prvalue`, or `xvalue`)
 
 ::: warning Crucial rule: Expressions never have reference types
-If you declare `int& ref = a;` or `int&& rref = 42;`, the **variables** `ref` and `rref` have reference types (`int&` and `int&&`). However, the moment you write `ref` or `rref` inside an expression, C++ strips the reference from the expression's type before doing anything else.
+If you declare `int& ref = a;` or `int&& rref = 42;`, the **variables** `ref` and `rref` have reference types (`int&` and `int&&`). However, as soon as you use `ref` or `rref` in an expression, C++ strips the reference from the expression's type before doing anything else.
 
 Both the expression `ref` and the expression `rref` have the non-reference **type `int`**. What distinguishes them from `42` is their **value category**.
 :::
@@ -83,16 +83,16 @@ Both the expression `ref` and the expression `rref` have the non-reference **typ
 Instead of memorizing dozens of arbitrary rules, ask two straightforward questions about any expression `E`:
 
 1. **Does `E` have identity?**
-   Can you point to a specific, identifiable location in memory (or a specific function) that outlives the immediate sub-expression? In practical terms: *if you evaluated `E` twice, would you be looking at the exact same object?*
+   Can you point to a specific, identifiable location in memory (or a specific function) that outlives the immediate sub-expression? In practical terms: *if you evaluated `E` twice, would you be referring to the exact same object?*
    * If **Yes**, `E` is a **glvalue** (*generalized lvalue*).
    * If **No**, `E` has no persistent home; it is just a transient result.
 
-2. **Can `E`'s resources be reused (moved from)?**
+2. **Can `E`'s resources be reused (i.e., moved from)?**
    Is the object behind `E` either an unnamed temporary or explicitly marked as "about to be discarded", meaning another function is allowed to steal its internal buffers/handles without breaking anything?
    * If **Yes**, `E` is an **rvalue**.
    * If **No**, `E` is actively in use and must not be pilfered.
 
-Combining those two Yes/No answers produces four logical slots. C++ uses three of them as its fundamental value categories (an expression with neither identity nor reusability would be useless, so that fourth slot does not exist):
+Combining these two yes/no answers yields four logical combinations. C++ uses three of them as its fundamental value categories; the fourth — neither identity nor movability — would be useless, so it does not exist:
 
 ```mermaid
 flowchart LR
@@ -123,7 +123,7 @@ flowchart LR
 | Category | Identity? | Movable? | Plain-English Meaning |
 | --- | --- | --- | --- |
 | **lvalue** | ✅ Yes | ❌ No | A regular, identifiable object in memory that you plan to keep using. |
-| **prvalue** | ❌ No | ✅ Yes | A **p**ure **r**value: a raw value or unmaterialized temporary with no name/address. |
+| **prvalue** | ❌ No | ✅ Yes | A **p**ure **r**value: a raw value or unmaterialized temporary with no name or address. |
 | **xvalue** | ✅ Yes | ✅ Yes | An e**x**piring value: an identifiable object whose resources are cleared for reuse. |
 
 Because some C++ rules care only about *identity* while others care only about *movability*, the standard groups these three into **two overlapping umbrella categories**:
@@ -139,14 +139,14 @@ Notice that **`xvalue` sits in the overlap**: it has identity like an `lvalue`, 
 
 * An **lvalue** is **your house**. It has a street address (identity), you can invite guests over (`&house`), and nobody is allowed to haul away your furniture without asking.
 * A **prvalue** is **the aroma of freshly brewed coffee** drifting across the kitchen. You can enjoy it right now (use it to initialize a variable or compute a result), but you cannot mail a letter to the aroma — it has no street address.
-* An **xvalue** is **a house on closing day with an "Everything Must Go" sign**. It still has a street address (identity), so you know exactly which house it is, but the owner has explicitly declared that movers are free to strip the furniture out of it.
+* An **xvalue** is **a house on closing day with an "Everything Must Go" sign**. It still has a street address (identity), so you know exactly which house it is, but the owner has explicitly declared that movers may strip the furniture out of it.
 :::
 
 ::: warning Where the analogy breaks
 An `xvalue` does **not** automatically destroy or empty the object. Putting an "Everything Must Go" sign on the house (`std::move(x)`) only grants **permission**. If nobody shows up with a moving truck (i.e., if no move constructor or move assignment operator runs), the furniture stays right where it is.
 :::
 
-## High-Frequency Expressions at a Glance
+## Common Expressions at a Glance
 
 Before writing code, let's see how common C++ expressions map onto the three categories — and *why*.
 
@@ -154,7 +154,7 @@ Before writing code, let's see how common C++ expressions map onto the three cat
 
 Numeric, boolean, and pointer literals represent pure mathematical values baked into instructions. They do not occupy addressable objects in memory, so they have no identity.
 
-*(Exception: String literals like `"hello"` are stored in static read-only memory as `const char[6]` arrays, so `"hello"` is an **lvalue** — you can even write `&"hello"`.)*
+*(Exception: String literals such as `"hello"` are stored in static read-only memory as `const char[6]` arrays, so `"hello"` is an **lvalue** — you can even write `&"hello"`.)*
 
 ### 2. Variable names (`a`, `ref`, `rref`) $\rightarrow$ **lvalue**
 
@@ -162,14 +162,14 @@ Any identifier naming a variable, function parameter, or function has a concrete
 
 ### 3. Built-in arithmetic (`a + b`, `a * 2`, `-a`) $\rightarrow$ **prvalue**
 
-Adding `a` and `b` computes a brand-new result. That result is not `a` and not `b`; it is a transient value with no name, hence a **prvalue**.
+Adding `a` and `b` computes a brand-new result. That result is neither `a` nor `b`; it is a transient value with no name, hence a **prvalue**.
 
 ### 4. Prefix vs. Postfix Increment (`++a` vs. `a++`) $\rightarrow$ **lvalue** vs. **prvalue**
 
 This classic comparison makes the "identity" test crystal clear:
 
-* **`++a` (prefix)**: Increments `a` in place and hands back `a` itself. Because the result *is* the identifiable object `a`, `++a` is an **lvalue** (`&(++a)` is valid!).
-* **`a++` (postfix)**: Saves a snapshot of `a`'s old value, increments `a`, and hands back that temporary snapshot. Because the snapshot is a transient copy rather than `a` itself, `a++` is a **prvalue** (`&(a++)` fails to compile).
+* **`++a` (prefix)**: Increments `a` in place and returns `a` itself. Because the result *is* the identifiable object `a`, `++a` is an **lvalue** (`&(++a)` is valid!).
+* **`a++` (postfix)**: Saves a snapshot of `a`'s old value, increments `a`, and returns that temporary snapshot. Because the snapshot is a transient copy rather than `a` itself, `a++` is a **prvalue** (`&(a++)` fails to compile).
 
 ### 5. Member access (`obj.member`) $\rightarrow$ inherits from `obj`
 
@@ -180,11 +180,11 @@ When accessing a non-static data member `m` of an object `obj`:
 
 ### 6. `std::move(a)` and `static_cast<T&&>(a)` $\rightarrow$ **xvalue**
 
-`std::move(a)` does not execute any runtime instructions. Under the hood, it is literally a type cast: `static_cast<std::remove_reference_t<T>&&>(a)`. Casting an object to an rvalue reference tells the compiler: *"Keep pointing at `a`'s memory address (identity), but treat its resources as eligible for reuse (movable)."* That is the exact definition of an **xvalue**.
+`std::move(a)` does not execute any runtime instructions. Under the hood, it is literally a type cast: `static_cast<std::remove_reference_t<T>&&>(a)`. Casting an object to an rvalue reference tells the compiler: *"Keep pointing at `a`'s memory address (identity), but treat its resources as eligible for reuse (movable)."* That is exactly the definition of an **xvalue**.
 
 ## Hands-On Lab: Observing Value Categories via Overload Resolution
 
-The most practical way to see value categories in action is to watch how C++ picks between two overloaded functions:
+The most practical way to see value categories in action is to watch how C++ chooses between two overloaded functions:
 
 * `void inspect(int& x)` — accepts **only lvalues** (mutable objects we must not steal from).
 * `void inspect(int&& x)` — accepts **only rvalues** (`prvalues` and `xvalues` — temporaries or expiring objects we are allowed to move from).
@@ -273,11 +273,11 @@ Compile with any modern C++ compiler (`g++ -std=c++17 value_categories.cpp -o vc
 
 **Look closely at lines 4–5 and 8–9:**
 
-* **Lines 4 & 5 (`++a` vs `a++`)**: `++a` incremented `a` from `10` to `11` and routed to `[lvalue]`. Then `a++` evaluated to the old value `11` (a temporary snapshot) and routed to `[rvalue]`, while quietly incrementing `a` to `12` in the background (which you can see on line 6).
+* **Lines 4 & 5 (`++a` vs. `a++`)**: `++a` incremented `a` from `10` to `11` and routed to `[lvalue]`. Then `a++` evaluated to the old value `11` (a temporary snapshot) and routed to `[rvalue]`, while quietly incrementing `a` to `12` in the background (which you can see on line 6).
 * **Line 8 (`inspect(rref)`)**: Even though `rref` was declared as `int&&`, passing `rref` by name called `inspect(int&)`. Because `rref` has a name, you could use `rref` again on line 9! If line 8 had silently treated `rref` as an rvalue and cannibalized its resources, line 9 would be reading from a gutted object. C++ protects you by making **every named variable an lvalue**, regardless of its declared type.
 
 ::: tip Going one step further: distinguishing prvalue vs. xvalue
-Overload resolution (`T&` vs `T&&`) groups `prvalue` and `xvalue` together as **rvalues**. If you ever want the compiler to distinguish all three categories, wrap the expression in double parentheses inside `decltype((expr))`:
+Overload resolution (`T&` vs. `T&&`) groups `prvalue` and `xvalue` together as **rvalues**. If you ever want the compiler to distinguish all three categories, wrap the expression in double parentheses inside `decltype((expr))`:
 
 * `decltype((expr))` yields `T&` if `expr` is an **lvalue**
 * `decltype((expr))` yields `T&&` if `expr` is an **xvalue**
@@ -409,7 +409,7 @@ struct User {
 | 5 | `x++` | prvalue | ❌ No | Postfix increment returns a temporary copy of the old value. |
 | 6 | `arr[2]` | lvalue | ✅ Yes | Subscripting an array lvalue yields an identifiable element. |
 | 7 | `r` | lvalue | ✅ Yes | `r` is a named variable; expressions with names are lvalues. |
-| 8 | `std::move(x)` | xvalue | ❌ No | Cast to `int&&`; has identity (`x`) and is movable (`rvalue`). |
+| 8 | `std::move(x)` | xvalue | ❌ No | Cast to `int&&`; has identity (`x`) and is movable (an rvalue). |
 | 9 | `"C++"` | lvalue | ✅ Yes | String literals live in static storage as `const char[4]` arrays. |
 
 :::
