@@ -53,10 +53,11 @@ Understanding compiler errors like *"cannot bind non-const lvalue reference to a
 :::
 
 ::: danger First, unlearn the old classroom slogan
-If you have heard *"lvalues go on the left of `=`, and rvalues go on the right of `=`"*, **forget it right now**. That rule came from 1970s C, and modern C++ violates it constantly:
+If you have heard *"lvalues go on the left of `=`, and rvalues go on the right of `=`"*, **forget it right now**. That rule came from 1970s C, and C++ violates it in both directions:
 
-* `const int x = 5;` — `x` is an **lvalue**, yet `x = 10;` is illegal.
-* `std::string{"hi"} = "bye";` — `std::string{"hi"}` is a **prvalue**, yet it sits legally on the left of `=`.
+* `const int x = 5;` — `x` is an **lvalue**, yet `x = 10;` is illegal because it is `const` (non-modifiable).
+* `int y = x;` — `x` is an **lvalue**, yet it sits on the **right** of `=` (via lvalue-to-rvalue conversion).
+* `std::string{"hi"} = "bye";` — `std::string{"hi"}` is a **prvalue**, yet calling its non-`const` `operator=` member function on the left of `=` is allowed in C++.
 
 Position around `=` is a historical accident, not a definition.
 :::
@@ -465,7 +466,7 @@ User(std::string&& name)
 | `x++` (built-in postfix) | prvalue | ❌ | ✅ | ❌ | `T&&` |
 | `42` (non-string literal) | prvalue | ❌ | ✅ | ❌ | `T&&` |
 | `x + y` (built-in arithmetic) | prvalue | ❌ | ✅ | ❌ | `T&&` |
-| `&x` (built-in address-of) | prvalue | ❌ | ✅ | ❌ | `T&&` |
+| `&x` (address-of result; `&(&x)` invalid) | prvalue | ❌ | ✅ | ❌ | `T&&` |
 | `func()` (returns by value) | prvalue | ❌ | ✅ | ❌ | `T&&` |
 | `func()` (returns `T&`) | lvalue | ✅ | ❌ | ✅ | `T&` |
 | `func()` (returns `T&&`) | xvalue | ✅ | ✅ | ❌ | `T&&` |
