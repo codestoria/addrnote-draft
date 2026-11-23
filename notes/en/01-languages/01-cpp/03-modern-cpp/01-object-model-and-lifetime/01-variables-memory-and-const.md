@@ -67,7 +67,7 @@ Think of a type as the **blueprint/rulebook** and the memory space as the **phys
 
 ### The intuition, in one sentence
 
-> A variable name is a **label** pointing to a **typed region of memory**, and `const` restricts **how you may access or modify** what that label reaches — not necessarily every bit in the universe.
+A variable name is a **label** pointing to a **typed region of memory**, and `const` restricts **how you may access or modify** what that label reaches — not necessarily every bit in the universe.
 
 ### Objects vs. entities (and why functions and references are special)
 
