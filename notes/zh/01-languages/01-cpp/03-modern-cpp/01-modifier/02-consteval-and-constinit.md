@@ -29,7 +29,6 @@ int a = square(runtime_n);  // Compiles silently, but runs at RUNTIME, not compi
 // Meanwhile, for a mutable global variable:
 // constexpr int g_counter = 0;  // Cannot modify g_counter later (it is const)!
 int g_counter = 0;               // Mutable, but dynamic initialization order across .cpp files is risky
-
 ```
 
 In the first snippet, `square(runtime_n)` silently falls back to runtime execution instead of failing compilation when you expected a guaranteed compile-time result.
@@ -98,7 +97,7 @@ flowchart TD
 
 ### The intuition, in one sentence
 
-`consteval` is a **compile-time-only** `constexpr` function that refuses to run at runtime, while `constinit` is a **constant-initialized** static or `thread_local` variable that **strips away `const**` so you can still mutate it at runtime.
+`consteval` is a **compile-time-only** `constexpr` function that refuses to run at runtime, while `constinit` is a **constant-initialized** static or `thread_local` variable that **strips away **`const`** so you can still mutate it at runtime.
 
 ### Analogy — and where it breaks
 
@@ -231,7 +230,8 @@ constexpr std::size_t portable_strlen(const char* s) {
     return len;
 }
 
-// Imagine a fast runtime helper (e.g., SIMD or dedicated library call)
+// Placeholder for a fast runtime helper (e.g., SIMD or dedicated library call);
+// reuses portable_strlen here just to keep the self-contained example minimal.
 std::size_t fast_runtime_strlen(const char* s) {
     return portable_strlen(s);
 }
@@ -291,18 +291,18 @@ void f() {
 Local variables inside functions have automatic storage duration by default, so `constinit` cannot be used on them.
 :::
 
-### Pitfall 3 — Taking a runtime function pointer to a `consteval` function
+### Pitfall 3 — Taking a function pointer to a `consteval` function in a runtime context
 
 ::: danger False
 ```cpp
 consteval int add_one(int x) { return x + 1; }
 
 int main() {
-    // auto p = &add_one;  // Error: cannot take address of immediate function
+    // auto p = &add_one;  // Error: cannot form runtime function pointer to immediate function
 }
 ```
 
-Immediate functions do not exist as ordinary runtime function entities with a runtime address.
+Immediate functions are evaluated at compile time and cannot be used to form a runtime function pointer in non-constant contexts.
 :::
 
 ### Pitfall 4 — Writing `if constexpr (std::is_constant_evaluated())`
@@ -369,7 +369,7 @@ constexpr int maybe_eval(int x) {
 1. **Valid; mutable at runtime:** `counter` has static storage duration, is constant-initialized to `0`, and is not `const`, so `counter = 5;` is allowed.
 2. **Valid; NOT mutable at runtime:** `constinit const int` enforces constant initialization and makes `limit` `const`, so `limit = 200;` fails to compile.
 3. **Invalid (compile error):** `local_v` has automatic storage duration, not static or `thread_local` storage duration.
-4. **Invalid (compile error):** `twice` is `consteval`, so `y` must be usable in a constant expression.
+4. **Invalid (compile error):** `twice` is `consteval`, so the call must be a constant expression and `y` cannot be evaluated as a runtime argument here.
 5. **Invalid assignment (compile error):** `constexpr` variables have top-level `const`, so `k = 20;` fails to compile.
 :::
 
