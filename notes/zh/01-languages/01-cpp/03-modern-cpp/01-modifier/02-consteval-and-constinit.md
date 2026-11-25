@@ -16,7 +16,8 @@ outline: deep
 
 ## Motivation
 
-Suppose you write a `constexpr` helper that computes a compile-time lookup table or validates a format string, and you also maintain a global state counter that must be initialized without order-of-initialization bugs. With only `constexpr` and `const`, two gaps quickly surface:
+Suppose you write a `constexpr` helper that computes a compile-time lookup table or validates a format string, and you also maintain a global state counter that must be initialized without order-of-initialization bugs.
+With only `constexpr` and `const`, two gaps quickly surface:
 
 ```cpp
 constexpr int square(int n) {
