@@ -4,12 +4,13 @@ description: Master C++20 consteval and constinit, constant evaluation detection
 outline: deep
 ---
 
-# `consteval` and `constinit`
+# Enforcing Compile-Time Execution & Constant Init: `consteval` and `constinit`
 
 ::: tip What you'll learn
+
 * Understand why `constexpr`'s "dual-mode" behavior creates hazards for strict compile-time checks and predictable initialization
 * Use `consteval` (C++20) to define **immediate functions** whose every potentially-evaluated call must evaluate at compile time
-* Use `constinit` (C++20) to guarantee **constant initialization** for static or thread-local variables while keeping them mutable at runtime
+* Use `constinit` (C++20) to guarantee **constant initialization** for static or `thread_local` variables while keeping them mutable at runtime
 * Write dual-path compile-time/runtime code using `std::is_constant_evaluated()` (C++20) and `if consteval` (C++23)
 * Choose cleanly among `const`, `constexpr`, `consteval`, and `constinit` using a complete decision tree
 :::
@@ -38,7 +39,7 @@ In the second snippet, `constexpr` forces `const` (read-only) semantics, while a
 C++20 closes both gaps with `consteval` and `constinit` so you can state your exact intent rather than relying on implicit fallbacks or bundled `const`.
 
 ::: tip When this matters most
-Writing compile-time validators, lookup-table generators, or security/invariant checks that must never slip into runtime; eliminating Static Initialization Order Fiasco (SIOF) on mutable globals or `thread_local` state; and selecting the right specifier in modern C++ codebases.
+Writing compile-time validators, lookup-table generators, or security/invariant checks that must never slip into runtime; eliminating the Static Initialization Order Fiasco (SIOF) on mutable globals or `thread_local` state; and selecting the right specifier in modern C++ codebases.
 :::
 
 ::: info When you can ignore it
@@ -56,15 +57,15 @@ It does **not** make the variable read-only at runtime. Misreading `constinit` a
 
 To keep `const`, `constexpr`, `consteval`, and `constinit` straight, separate **functions** from **variables** and ask what guarantee you actually need:
 
-1. **Modifying a function — must it ALWAYS run at compile time?**
-    - **Yes, 100% compile-time only (never a runtime call):** Use `consteval` (immediate function).
-    - **Compile-time when possible, runtime also allowed:** Use `constexpr`.
+1. **Declaring a function — must it ALWAYS run at compile time?**
+* **Yes, 100% compile-time only (never a runtime call):** Use `consteval` (immediate function).
+* **Compile-time when possible, runtime also allowed:** Use `constexpr`.
 
 
-2. **Modifying a variable — what are your compile-time and mutability requirements?**
-    - **Runtime read-only view/variable; initial value may come at runtime:** Use `const`.
-    - **Must produce a compile-time constant expression AND be `const` (read-only):** Use `constexpr`.
-    - **Must have static or `thread_local` storage, be constant-initialized at compile time, AND remain modifiable at runtime:** Use `constinit`.
+2. **Declaring a variable — what are your compile-time and mutability requirements?**
+* **Runtime read-only view/variable; initial value may come at runtime:** Use `const`.
+* **Must produce a compile-time constant expression AND be `const` (read-only):** Use `constexpr`.
+* **Must have static or `thread_local` storage, be constant-initialized at compile time, AND remain modifiable at runtime:** Use `constinit`.
 
 
 
@@ -94,6 +95,7 @@ flowchart TD
     class CONSTEVAL,CONSTINIT newKw
     class CONSTEXPR_FN,CONSTEXPR_VAR,CONST classicKw
     class START,FN,VAR,F1,V1,V2 qNode
+
 ```
 
 ### The intuition, in one sentence
@@ -131,7 +133,7 @@ Similarly, `consteval` functions do not exist as ordinary callable runtime funct
 `constinit` is a variable specifier with strict rules on **where** it can appear and **what** it guarantees.
 
 * **Storage duration restriction:** `constinit` may only be applied to variables with **static storage duration** (namespace-scope variables and `static` variables) or **thread storage duration** (`thread_local` variables). It **cannot** be used on automatic (local stack) variables inside a function.
-* **Eliminates Static Initialization Order Fiasco (SIOF):** In C++, variables with static storage duration across different `.cpp` files that require *dynamic* initialization have an unspecified initialization order across translation units. If `file_b.cpp` reads a global from `file_a.cpp` during dynamic startup before `file_a.cpp` initializes it, you hit SIOF (undefined behavior). `constinit` requires **constant initialization**, which happens before dynamic initialization (and can be performed at compile time / placed in static data segments with zero runtime initialization order hazard).
+* **Eliminates the Static Initialization Order Fiasco (SIOF):** In C++, variables with static storage duration across different `.cpp` files that require *dynamic* initialization have an unspecified initialization order across translation units. If `file_b.cpp` reads a global from `file_a.cpp` during dynamic startup before `file_a.cpp` initializes it, you hit SIOF (undefined behavior). `constinit` requires **constant initialization**, which happens before dynamic initialization (and can be performed at compile time / placed in static data segments with zero runtime initialization order hazard).
 * **Mutability preserved:** `constinit` does **not** imply `const`. For example, `constinit int g_hits = 0;` is non-`const` and can be incremented (`++g_hits;`) at runtime. If you want both constant initialization and read-only enforcement, you write `constinit const int` (or `constexpr`).
 
 ### Detecting constant evaluation: `std::is_constant_evaluated()` (C++20) and `if consteval` (C++23)
@@ -262,7 +264,7 @@ int main() {
 
 * `static_assert(smart_strlen("hello") == 5)` forces constant evaluation, where `std::is_constant_evaluated()` returns `true`.
 * `smart_strlen(dynamic_ptr)` is evaluated at runtime, where `std::is_constant_evaluated()` returns `false` and takes the runtime branch.
-* Notice we used a plain `if (...)` rather than `if constexpr (...)` so both branches remain available according to evaluation context.
+* Notice we used a plain `if (...)` rather than `if constexpr (...)` so both branches remain available according to the evaluation context.
 
 ::: tip Key insight
 `consteval` guarantees **when a function's result is computed** (always compile time), whereas `constinit` guarantees **how a static/`thread_local` variable is initialized** (constant initialization) while keeping it **mutable at runtime**.
@@ -420,7 +422,7 @@ With `if constexpr`, the condition was evaluated in a constant-expression contex
 ## Summary
 
 * `consteval` (C++20) defines an **immediate function** that must evaluate at compile time on every potentially-evaluated call and has no runtime address.
-* `constinit` (C++20) enforces **constant initialization** on static or `thread_local` variables to prevent Static Initialization Order Fiasco while preserving **runtime mutability**.
+* `constinit` (C++20) enforces **constant initialization** on static or `thread_local` variables to prevent the Static Initialization Order Fiasco while preserving **runtime mutability**.
 * Never write `if constexpr (std::is_constant_evaluated())`; use `if (std::is_constant_evaluated())` in C++20 or `if consteval` in C++23.
 * Choose `const` for runtime read-only protection, `constexpr` for compile-time constants and flexible dual-context functions, `consteval` for strict compile-time-only functions, and `constinit` for constant-initialized mutable static/`thread_local` state.
 

@@ -1,10 +1,10 @@
 ---
-title: 'constexpr: Compile-Time vs. Runtime Evaluation'
+title: 'constexpr and if constexpr'
 description: Build a clear mental model of compile-time vs. runtime evaluation, constexpr variables and pointers, dual-mode functions across C++11–C++20, literal types, and if constexpr.
 outline: deep
 ---
 
-# `constexpr`: Compile-Time vs. Runtime Evaluation
+# Compile-Time vs. Runtime Evaluation: `constexpr` and `if constexpr`
 
 ::: tip What you'll learn
 - Separate **mutability** (`const`) from **evaluation time** (`constexpr`) as two independent dimensions
