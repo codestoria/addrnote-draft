@@ -1,10 +1,10 @@
 ---
-title: 'constexpr: Compile-Time vs. Runtime Evaluation'
+title: 'constexpr and if constexpr'
 description: Build a clear mental model of compile-time vs. runtime evaluation, constexpr variables and pointers, dual-mode functions across C++11–C++20, literal types, and if constexpr.
 outline: deep
 ---
 
-# `constexpr`: Compile-Time vs. Runtime Evaluation
+# Compile-Time vs. Runtime Evaluation: `constexpr` and `if constexpr`
 
 ::: tip What you'll learn
 - Separate **mutability** (`const`) from **evaluation time** (`constexpr`) as two independent dimensions
@@ -126,12 +126,12 @@ A `constexpr` variable declaration obeys three strict rules:
 
 That third rule creates a classic surprise with pointers. Recall that top-level `const` applies to the **pointer object itself**, not the pointee:
 
-* `constexpr int* p = &global_x;` is equivalent to **`int* const p = &global_x;`** — the pointer `p` cannot be aimed at another address, **but `*p` can still be modified** if `global_x` is non-`const`.
-* `constexpr const int* p = &global_x;` is equivalent to **`const int* const p = &global_x;`** — neither the pointer `p` nor the pointed-to integer `*p` can be modified through `p`.
+- `constexpr int* p = &global_x;` is equivalent to **`int* const p = &global_x;`** — the pointer `p` cannot be aimed at another address, **but `*p` can still be modified** if `global_x` is non-`const`.
+- `constexpr const int* p = &global_x;` is equivalent to **`const int* const p = &global_x;`** — neither the pointer `p` nor the pointed-to integer `*p` can be modified through `p`.
 
 **Address constant expression restriction:** When a `constexpr` pointer (or reference) binds to an address, that address must remain constant across the lifetime of the program. Therefore, a `constexpr` pointer may only be initialized with:
 
-- `nullptr` (or `0`), or
+- `nullptr` (or an integer literal `0` converted to a pointer), or
 - The address of an object with **static storage duration** (a global/namespace-scope variable, a `static` local variable, or a `static` class data member), or a function.
 
 Binding a `constexpr` pointer to an automatic (stack-allocated) local variable is forbidden because stack frame addresses are not fixed compile-time constant addresses across program execution.
@@ -162,8 +162,8 @@ C++ has steadily expanded what is legal inside a `constexpr` function body:
 
 **Implicit `inline` rule:**
 
-- Every `constexpr` function (and C++17 `constexpr` static data member) is **implicitly `inline**`, meaning you can define it in a header file included by multiple `.cpp` translation units without violating the One Definition Rule (ODR).
-- By contrast, namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default, like `const` globals). If you want a single shared address across translation units in C++17+, write `inline constexpr`.
+- Every `constexpr` function is **implicitly `inline`** (and since C++17, `constexpr` `static` data members are also implicitly `inline`), so defining them in a header included by multiple `.cpp` translation units does not violate the One Definition Rule (ODR).
+- By contrast, non-`static` namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default, like `const` globals). If you want a single shared address across translation units in C++17+, write `inline constexpr`.
 
 ### 3. Literal types and `constexpr` constructors
 
@@ -171,7 +171,7 @@ C++ has steadily expanded what is legal inside a `constexpr` function body:
 
 1. All non-static data members and base classes are themselves literal types (such as built-in arithmetic types, pointers, references, or other literal structs).
 2. The class has at least one `constexpr` constructor (or is an aggregate, like a simple `struct` with public members and no user-provided constructors) that initializes every member.
-3. Prior to C++20, the class had to have a trivial destructor (C++20 lifted this restriction, allowing `constexpr` destructors).
+3. Prior to C++20, a literal type generally needed a trivial destructor (with C++20 allowing user-declared `constexpr` / non-trivial destructors, such as cleaning up dynamically allocated resources during constant evaluation).
 
 **Subtle C++11 vs. C++14 member function difference:**
 
@@ -521,7 +521,8 @@ std::size_t element_or_byte_count(const T& val) {
     if constexpr (std::is_arithmetic_v<T>) {
         return sizeof(val);
     } else {
-        return val.size();  // Discarded when T is an arithmetic type like int
+        return val.size();  // Discarded when T is an arithmetic type (e.g., int);
+                            // still requires .size() if T is a non-arithmetic type without it
     }
 }
 ```

@@ -96,7 +96,7 @@ flowchart TD
 
 ### The intuition, in one sentence
 
-`consteval` is a **compile-time-only** `constexpr` function that refuses to run at runtime, while `constinit` is a **constant-initialized** static or `thread_local` variable that **strips away **`const`** so you can still mutate it at runtime.
+`consteval` is a **compile-time-only** `constexpr` function that refuses to run at runtime, while `constinit` is a **constant-initialized** static or `thread_local` variable that strips away `const` so you can still mutate it at runtime.
 
 ### Analogy — and where it breaks
 
@@ -121,7 +121,7 @@ Similarly, `consteval` functions do not exist as ordinary callable runtime funct
 `consteval` can be applied to functions, member functions, constructors, and lambdas to declare an **immediate function**.
 
 - **Strict compile-time requirement:** Every *potentially-evaluated* call to a `consteval` function must produce a constant expression. If any argument is not a constant expression or evaluation fails constant-expression rules, the program is ill-formed (compile error).
-- **No runtime address / no runtime entity:** Because immediate functions are evaluated at compile time rather than executed as ordinary runtime calls, taking the address of a `consteval` function in a non-constant expression (such as forming a runtime function pointer `auto fp = &strict_fn;`) is ill-formed.
+- **No runtime address / no runtime entity:** Because immediate functions are evaluated at compile time rather than executed as ordinary runtime calls, taking the address of a `consteval` function outside an immediate/constant context (such as forming a runtime function pointer `auto fp = &strict_fn;`) is ill-formed.
 - **Immediate escalation:** Inside a `consteval` function, calling another `consteval` or `constexpr` function happens within constant evaluation. Furthermore, under C++20/C++23 immediate escalation rules, a call to a `consteval` function inside a `constexpr` function or immediate-escalating context can promote/escalate requirements so the surrounding context itself must evaluate as a constant expression if needed.
 
 ### `constinit` (Guaranteed Constant Initialization, C++20)
@@ -317,7 +317,8 @@ constexpr int f() {
 }
 ```
 
-Because `if constexpr` evaluates its condition as a constant expression at compile time, `std::is_constant_evaluated()` is `true` during that check, discarding the `else` branch even when `f()` is later called at runtime. Use `if (std::is_constant_evaluated())` (or `if consteval` in C++23).
+Because `if constexpr` evaluates its condition as a constant expression at compile time, `std::is_constant_evaluated()` is `true` during that check, discarding the `else` branch even when `f()` is later called at runtime.
+Use `if (std::is_constant_evaluated())` (or `if consteval` in C++23).
 :::
 
 ### Pitfall 5 — Confusing `constexpr` variables (always `const`) with `constinit` variables
@@ -331,7 +332,7 @@ A `constinit int x = 0;` variable is **mutable** at runtime; only `constinit con
 
 **Exercise 1.** For each declaration or statement below, state whether it is valid in C++20 and whether the resulting variable (if any) can be modified at runtime:
 
-1. `constinit int counter = 0;` followed by `counter = 5;`
+1. At namespace scope: `constinit int counter = 0;` followed by `counter = 5;`
 2. `constinit const int limit = 100;` followed by `limit = 200;`
 3. `void fn() { constinit int local_v = 3; }`
 4. `consteval int twice(int x) { return x * 2; }` called with a non-`constexpr` local variable `int y = 4; twice(y);`
@@ -391,7 +392,8 @@ constexpr int maybe_eval(int x) {
 }
 ```
 
-With `if constexpr`, the condition was evaluated in a constant-expression context and forced the `else` branch to be discarded at compile time. With plain `if`, `std::is_constant_evaluated()` accurately reflects whether the call to `maybe_eval` itself is being constant-evaluated.
+With `if constexpr`, the condition was evaluated in a constant-expression context and forced the `else` branch to be discarded at compile time.
+With plain `if`, `std::is_constant_evaluated()` accurately reflects whether the call to `maybe_eval` itself is being constant-evaluated.
 :::
 
 ::: details Exercise 3 — matching keywords to requirements
