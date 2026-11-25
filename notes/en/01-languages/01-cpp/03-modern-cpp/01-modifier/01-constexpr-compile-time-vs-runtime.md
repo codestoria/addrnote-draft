@@ -162,8 +162,8 @@ C++ has steadily expanded what is legal inside a `constexpr` function body:
 
 **Implicit `inline` rule:**
 
-- Every `constexpr` function (and C++17 `constexpr` static data member) is **implicitly `inline**`, meaning you can define it in a header file included by multiple `.cpp` translation units without violating the One Definition Rule (ODR).
-- By contrast, namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default, like `const` globals). If you want a single shared address across translation units in C++17+, write `inline constexpr`.
+- Every `constexpr` function is **implicitly `inline`** (and since C++17, `constexpr` `static` data members are also implicitly `inline`), so defining them in a header included by multiple `.cpp` translation units does not violate the One Definition Rule (ODR).
+- By contrast, non-`static` namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default, like `const` globals). If you want a single shared address across translation units in C++17+, write `inline constexpr`.
 
 ### 3. Literal types and `constexpr` constructors
 
@@ -171,7 +171,7 @@ C++ has steadily expanded what is legal inside a `constexpr` function body:
 
 1. All non-static data members and base classes are themselves literal types (such as built-in arithmetic types, pointers, references, or other literal structs).
 2. The class has at least one `constexpr` constructor (or is an aggregate, like a simple `struct` with public members and no user-provided constructors) that initializes every member.
-3. Prior to C++20, the class had to have a trivial destructor (C++20 lifted this restriction, allowing `constexpr` destructors).
+3. Prior to C++20, a literal type generally needed a trivial destructor (with C++20 allowing user-declared `constexpr` / non-trivial destructors, such as cleaning up dynamically allocated resources during constant evaluation).
 
 **Subtle C++11 vs. C++14 member function difference:**
 

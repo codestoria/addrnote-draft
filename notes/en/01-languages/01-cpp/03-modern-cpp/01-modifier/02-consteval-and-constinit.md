@@ -121,7 +121,7 @@ Similarly, `consteval` functions do not exist as ordinary callable runtime funct
 `consteval` can be applied to functions, member functions, constructors, and lambdas to declare an **immediate function**.
 
 - **Strict compile-time requirement:** Every *potentially-evaluated* call to a `consteval` function must produce a constant expression. If any argument is not a constant expression or evaluation fails constant-expression rules, the program is ill-formed (compile error).
-- **No runtime address / no runtime entity:** Because immediate functions are evaluated at compile time rather than executed as ordinary runtime calls, taking the address of a `consteval` function in a non-constant expression (such as forming a runtime function pointer `auto fp = &strict_fn;`) is ill-formed.
+- **No runtime address / no runtime entity:** Because immediate functions are evaluated at compile time rather than executed as ordinary runtime calls, taking the address of a `consteval` function outside an immediate/constant context (such as forming a runtime function pointer `auto fp = &strict_fn;`) is ill-formed.
 - **Immediate escalation:** Inside a `consteval` function, calling another `consteval` or `constexpr` function happens within constant evaluation. Furthermore, under C++20/C++23 immediate escalation rules, a call to a `consteval` function inside a `constexpr` function or immediate-escalating context can promote/escalate requirements so the surrounding context itself must evaluate as a constant expression if needed.
 
 ### `constinit` (Guaranteed Constant Initialization, C++20)
