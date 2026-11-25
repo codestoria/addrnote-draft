@@ -317,7 +317,8 @@ constexpr int f() {
 }
 ```
 
-Because `if constexpr` evaluates its condition as a constant expression at compile time, `std::is_constant_evaluated()` is `true` during that check, discarding the `else` branch even when `f()` is later called at runtime. Use `if (std::is_constant_evaluated())` (or `if consteval` in C++23).
+Because `if constexpr` evaluates its condition as a constant expression at compile time, `std::is_constant_evaluated()` is `true` during that check, discarding the `else` branch even when `f()` is later called at runtime.
+Use `if (std::is_constant_evaluated())` (or `if consteval` in C++23).
 :::
 
 ### Pitfall 5 — Confusing `constexpr` variables (always `const`) with `constinit` variables
