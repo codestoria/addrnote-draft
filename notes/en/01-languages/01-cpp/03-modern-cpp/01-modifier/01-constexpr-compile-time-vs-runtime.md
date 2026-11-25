@@ -1,10 +1,10 @@
 ---
-title: 'constexpr and if constexpr'
+title: 'constexpr: Compile-Time vs. Runtime Evaluation'
 description: Build a clear mental model of compile-time vs. runtime evaluation, constexpr variables and pointers, dual-mode functions across C++11–C++20, literal types, and if constexpr.
 outline: deep
 ---
 
-# Compile-Time vs. Runtime Evaluation: `constexpr` and `if constexpr`
+# `constexpr`: Compile-Time vs. Runtime Evaluation
 
 ::: tip What you'll learn
 - Separate **mutability** (`const`) from **evaluation time** (`constexpr`) as two independent dimensions
@@ -126,15 +126,15 @@ A `constexpr` variable declaration obeys three strict rules:
 
 That third rule creates a classic surprise with pointers. Recall that top-level `const` applies to the **pointer object itself**, not the pointee:
 
-- `constexpr int* p = &global_x;` is equivalent to **`int* const p = &global_x;`** — the pointer `p` cannot be aimed at another address, **but `*p` can still be modified** if `global_x` is non-`const`.
-- `constexpr const int* p = &global_x;` is equivalent to **`const int* const p = &global_x;`** — neither the pointer `p` nor the pointed-to integer `*p` can be modified through `p`.
+* `constexpr int* p = &global_x;` is equivalent to **`int* const p = &global_x;`** — the pointer `p` cannot be aimed at another address, **but `*p` can still be modified** if `global_x` is non-`const`.
+* `constexpr const int* p = &global_x;` is equivalent to **`const int* const p = &global_x;`** — neither the pointer `p` nor the pointed-to integer `*p` can be modified through `p`.
 
 **Address constant expression restriction:** When a `constexpr` pointer (or reference) binds to an address, that address must remain constant across the lifetime of the program. Therefore, a `constexpr` pointer may only be initialized with:
 
 - `nullptr` (or `0`), or
 - The address of an object with **static storage duration** (a global/namespace-scope variable, a `static` local variable, or a `static` class data member), or a function.
 
-Binding a `constexpr` pointer to an automatic (stack-allocated) local variable is forbidden because stack frame addresses do not exist at compile time.
+Binding a `constexpr` pointer to an automatic (stack-allocated) local variable is forbidden because stack frame addresses are not fixed compile-time constant addresses across program execution.
 
 | Declaration | Equivalent Type | Can reassign `p`? | Can modify `*p`? | Valid Target Address |
 | --- | --- | --- | --- | --- |
@@ -256,7 +256,7 @@ int main() {
 ```cpp
 #include <iostream>
 
-// Uses C++14 local variables and loops inside a constexpr function
+// Uses C++14 local variables and loops inside a constexpr function (small n to avoid uint64 wrap-around)
 constexpr unsigned long long factorial(unsigned int n) {
     unsigned long long result = 1;
     for (unsigned int i = 2; i <= n; ++i) {
@@ -380,27 +380,24 @@ int main() {
 }
 ```
 
-Storing the result in a non-`constexpr` variable (`int a`) does not require a constant expression.
-While an optimizer *may* fold `square(10)` into `100`, the language neither forces compile-time evaluation nor guarantees runtime evaluation here — compile-time evaluation is only guaranteed in a constant-expression context (or via C++20 `consteval`).
+Storing the result in a non-`constexpr` variable (`int a`) does not require a constant expression. While an optimizer *might* fold `square(10)` into `100`, the language only guarantees compile-time evaluation when the result is used in a constant-expression context (or with C++20 `consteval`).
 :::
 
 ### Pitfall 2 — Thinking `constexpr int* p` makes `*p` read-only
 
 ::: danger False
-`constexpr` applies top-level `const` to the declared entity `p`, turning `constexpr int* p` into `int* const p`.
-The pointer cannot be reassigned, but `*p` can still be modified unless you explicitly add low-level `const`: `constexpr const int* p`.
+`constexpr` applies top-level `const` to the declared entity `p`, turning `constexpr int* p` into `int* const p`. The pointer cannot be reassigned, but `*p` can still be modified unless you explicitly add low-level `const`: `constexpr const int* p`.
 :::
 
 ### Pitfall 3 — Binding a `constexpr` pointer to a local stack variable
 
 ::: warning Static storage duration required
 ```cpp
-int g_persistent = 7;
-
 void demo() {
     int local = 7;
     // constexpr int* p = &local;  // Error: '&local' is not a constant expression
-    constexpr int* ok = &g_persistent;  // Valid: static storage duration
+    static int persistent = 7;
+    constexpr int* ok = &persistent;  // Valid: static storage duration
 }
 ```
 
@@ -426,9 +423,7 @@ A `constexpr` function definition can be completely valid yet fail to compile fo
 ### Pitfall 5 — Assuming namespace-scope `constexpr` variables are implicitly `inline`
 
 ::: warning Functions vs. variables
-`constexpr` functions are implicitly `inline`, so putting them in a header file is safe.
-Namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default).
-In C++17 and later, if you define a `constexpr` constant in a header and want a single entity shared across all translation units (important if you take its address `&kConst`), declare it `inline constexpr`.
+`constexpr` functions are implicitly `inline`, so putting them in a header file is safe. Namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default). In C++17 and later, if you define a `constexpr` constant in a header and want a single entity shared across all translation units (important if you take its address `&kConst`), declare it `inline constexpr`.
 :::
 
 ### Pitfall 6 — Expecting `if constexpr` to ignore syntax errors or work outside templates
@@ -491,7 +486,7 @@ std::size_t element_or_byte_count(const T& val) {
 
 ::: details Exercise 1 — evaluation timing and compilation
 - **(1) Guaranteed compile-time:** Both arguments (`2`, `3`) are constant expressions, and `r1` is declared `constexpr` (requiring a constant expression initializer).
-- **(2) Not guaranteed compile-time:** Even though the arguments are literals, `r2` is a plain `int`, so the standard does not require compile-time evaluation (though a compiler may still constant-fold it).
+- **(2) Not guaranteed compile-time (runtime context):** Even though the arguments are literals, `r2` is a plain `int`, so the language does not require compile-time evaluation.
 - **(3) Fails to compile:** `r3` is `constexpr`, so its initializer *must* be a constant expression, but `runtime_val` is not a constant expression.
 - **(4) Evaluates at runtime:** `runtime_val` is a runtime variable and `r4` is a plain `int`, so `add` runs at runtime as a normal function.
 :::
