@@ -391,7 +391,8 @@ constexpr int maybe_eval(int x) {
 }
 ```
 
-With `if constexpr`, the condition was evaluated in a constant-expression context and forced the `else` branch to be discarded at compile time. With plain `if`, `std::is_constant_evaluated()` accurately reflects whether the call to `maybe_eval` itself is being constant-evaluated.
+With `if constexpr`, the condition was evaluated in a constant-expression context and forced the `else` branch to be discarded at compile time.
+With plain `if`, `std::is_constant_evaluated()` accurately reflects whether the call to `maybe_eval` itself is being constant-evaluated.
 :::
 
 ::: details Exercise 3 — matching keywords to requirements
