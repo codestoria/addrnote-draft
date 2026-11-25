@@ -131,7 +131,7 @@ That third rule creates a classic surprise with pointers. Recall that top-level 
 
 **Address constant expression restriction:** When a `constexpr` pointer (or reference) binds to an address, that address must remain constant across the lifetime of the program. Therefore, a `constexpr` pointer may only be initialized with:
 
-- `nullptr` (or `0`), or
+- `nullptr` (or an integer literal `0` converted to a pointer), or
 - The address of an object with **static storage duration** (a global/namespace-scope variable, a `static` local variable, or a `static` class data member), or a function.
 
 Binding a `constexpr` pointer to an automatic (stack-allocated) local variable is forbidden because stack frame addresses are not fixed compile-time constant addresses across program execution.
@@ -521,7 +521,8 @@ std::size_t element_or_byte_count(const T& val) {
     if constexpr (std::is_arithmetic_v<T>) {
         return sizeof(val);
     } else {
-        return val.size();  // Discarded when T is an arithmetic type like int
+        return val.size();  // Discarded when T is an arithmetic type (e.g., int);
+                            // still requires .size() if T is a non-arithmetic type without it
     }
 }
 ```

@@ -96,7 +96,7 @@ flowchart TD
 
 ### The intuition, in one sentence
 
-`consteval` is a **compile-time-only** `constexpr` function that refuses to run at runtime, while `constinit` is a **constant-initialized** static or `thread_local` variable that **strips away **`const`** so you can still mutate it at runtime.
+`consteval` is a **compile-time-only** `constexpr` function that refuses to run at runtime, while `constinit` is a **constant-initialized** static or `thread_local` variable that strips away `const` so you can still mutate it at runtime.
 
 ### Analogy — and where it breaks
 
@@ -332,7 +332,7 @@ A `constinit int x = 0;` variable is **mutable** at runtime; only `constinit con
 
 **Exercise 1.** For each declaration or statement below, state whether it is valid in C++20 and whether the resulting variable (if any) can be modified at runtime:
 
-1. `constinit int counter = 0;` followed by `counter = 5;`
+1. At namespace scope: `constinit int counter = 0;` followed by `counter = 5;`
 2. `constinit const int limit = 100;` followed by `limit = 200;`
 3. `void fn() { constinit int local_v = 3; }`
 4. `consteval int twice(int x) { return x * 2; }` called with a non-`constexpr` local variable `int y = 4; twice(y);`
