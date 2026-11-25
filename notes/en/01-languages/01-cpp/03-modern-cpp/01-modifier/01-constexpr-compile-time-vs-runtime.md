@@ -380,7 +380,7 @@ int main() {
 }
 ```
 
-Storing the result in a non-`constexpr` variable (`int a`) does not require a constant expression. While an optimizer *might* fold `square(10)` into `100`, the language only guarantees compile-time evaluation when the result is used in a constant-expression context (or with C++20 `consteval`).
+Storing the result in a non-`constexpr` variable (`int a`) does not require a constant expression. While an optimizer *may* fold `square(10)` into `100`, the language neither forces compile-time evaluation nor guarantees runtime evaluation here — compile-time evaluation is only guaranteed in a constant-expression context (or via C++20 `consteval`).
 :::
 
 ### Pitfall 2 — Thinking `constexpr int* p` makes `*p` read-only
@@ -393,11 +393,12 @@ Storing the result in a non-`constexpr` variable (`int a`) does not require a co
 
 ::: warning Static storage duration required
 ```cpp
+int g_persistent = 7;
+
 void demo() {
     int local = 7;
     // constexpr int* p = &local;  // Error: '&local' is not a constant expression
-    static int persistent = 7;
-    constexpr int* ok = &persistent;  // Valid: static storage duration
+    constexpr int* ok = &g_persistent;  // Valid: static storage duration
 }
 ```
 
@@ -486,7 +487,7 @@ std::size_t element_or_byte_count(const T& val) {
 
 ::: details Exercise 1 — evaluation timing and compilation
 - **(1) Guaranteed compile-time:** Both arguments (`2`, `3`) are constant expressions, and `r1` is declared `constexpr` (requiring a constant expression initializer).
-- **(2) Not guaranteed compile-time (runtime context):** Even though the arguments are literals, `r2` is a plain `int`, so the language does not require compile-time evaluation.
+- **(2) Not guaranteed compile-time:** Even though the arguments are literals, `r2` is a plain `int`, so the standard does not require compile-time evaluation (though a compiler may still constant-fold it).
 - **(3) Fails to compile:** `r3` is `constexpr`, so its initializer *must* be a constant expression, but `runtime_val` is not a constant expression.
 - **(4) Evaluates at runtime:** `runtime_val` is a runtime variable and `r4` is a plain `int`, so `add` runs at runtime as a normal function.
 :::
