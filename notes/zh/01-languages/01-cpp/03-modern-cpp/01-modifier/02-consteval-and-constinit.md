@@ -66,7 +66,6 @@ To keep `const`, `constexpr`, `consteval`, and `constinit` straight, separate **
    - **Must have static or `thread_local` storage, be constant-initialized at compile time, AND remain modifiable at runtime:** Use `constinit`.
 
 
-
 ```mermaid
 flowchart TD
     START["What are you declaring?"]
