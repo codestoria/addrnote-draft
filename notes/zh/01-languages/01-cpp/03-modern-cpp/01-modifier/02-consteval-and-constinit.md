@@ -7,12 +7,11 @@ outline: deep
 # Enforcing Compile-Time Execution & Constant Init: `consteval` and `constinit`
 
 ::: tip What you'll learn
-
-* Understand why `constexpr`'s "dual-mode" behavior creates hazards for strict compile-time checks and predictable initialization
-* Use `consteval` (C++20) to define **immediate functions** whose every potentially-evaluated call must evaluate at compile time
-* Use `constinit` (C++20) to guarantee **constant initialization** for static or `thread_local` variables while keeping them mutable at runtime
-* Write dual-path compile-time/runtime code using `std::is_constant_evaluated()` (C++20) and `if consteval` (C++23)
-* Choose cleanly among `const`, `constexpr`, `consteval`, and `constinit` using a complete decision tree
+- Understand why `constexpr`'s "dual-mode" behavior creates hazards for strict compile-time checks and predictable initialization
+- Use `consteval` (C++20) to define **immediate functions** whose every potentially-evaluated call must evaluate at compile time
+- Use `constinit` (C++20) to guarantee **constant initialization** for static or `thread_local` variables while keeping them mutable at runtime
+- Write dual-path compile-time/runtime code using `std::is_constant_evaluated()` (C++20) and `if consteval` (C++23)
+- Choose cleanly among `const`, `constexpr`, `consteval`, and `constinit` using a complete decision tree
 :::
 
 ## Motivation
@@ -58,14 +57,14 @@ It does **not** make the variable read-only at runtime. Misreading `constinit` a
 To keep `const`, `constexpr`, `consteval`, and `constinit` straight, separate **functions** from **variables** and ask what guarantee you actually need:
 
 1. **Declaring a function — must it ALWAYS run at compile time?**
-* **Yes, 100% compile-time only (never a runtime call):** Use `consteval` (immediate function).
-* **Compile-time when possible, runtime also allowed:** Use `constexpr`.
+   - **Yes, 100% compile-time only (never a runtime call):** Use `consteval` (immediate function).
+   - **Compile-time when possible, runtime also allowed:** Use `constexpr`.
 
 
 2. **Declaring a variable — what are your compile-time and mutability requirements?**
-* **Runtime read-only view/variable; initial value may come at runtime:** Use `const`.
-* **Must produce a compile-time constant expression AND be `const` (read-only):** Use `constexpr`.
-* **Must have static or `thread_local` storage, be constant-initialized at compile time, AND remain modifiable at runtime:** Use `constinit`.
+   - **Runtime read-only view/variable; initial value may come at runtime:** Use `const`.
+   - **Must produce a compile-time constant expression AND be `const` (read-only):** Use `constexpr`.
+   - **Must have static or `thread_local` storage, be constant-initialized at compile time, AND remain modifiable at runtime:** Use `constinit`.
 
 
 
@@ -95,7 +94,6 @@ flowchart TD
     class CONSTEVAL,CONSTINIT newKw
     class CONSTEXPR_FN,CONSTEXPR_VAR,CONST classicKw
     class START,FN,VAR,F1,V1,V2 qNode
-
 ```
 
 ### The intuition, in one sentence
@@ -124,25 +122,25 @@ Similarly, `consteval` functions do not exist as ordinary callable runtime funct
 
 `consteval` can be applied to functions, member functions, constructors, and lambdas to declare an **immediate function**.
 
-* **Strict compile-time requirement:** Every *potentially-evaluated* call to a `consteval` function must produce a constant expression. If any argument is not a constant expression or evaluation fails constant-expression rules, the program is ill-formed (compile error).
-* **No runtime address / no runtime entity:** Because immediate functions are evaluated at compile time rather than executed as ordinary runtime calls, taking the address of a `consteval` function in a non-constant expression (such as forming a runtime function pointer `auto fp = &strict_fn;`) is ill-formed.
-* **Immediate escalation:** Inside a `consteval` function, calling another `consteval` or `constexpr` function happens within constant evaluation. Furthermore, under C++20/C++23 immediate escalation rules, a call to a `consteval` function inside a `constexpr` function or immediate-escalating context can promote/escalate requirements so the surrounding context itself must evaluate as a constant expression if needed.
+- **Strict compile-time requirement:** Every *potentially-evaluated* call to a `consteval` function must produce a constant expression. If any argument is not a constant expression or evaluation fails constant-expression rules, the program is ill-formed (compile error).
+- **No runtime address / no runtime entity:** Because immediate functions are evaluated at compile time rather than executed as ordinary runtime calls, taking the address of a `consteval` function in a non-constant expression (such as forming a runtime function pointer `auto fp = &strict_fn;`) is ill-formed.
+- **Immediate escalation:** Inside a `consteval` function, calling another `consteval` or `constexpr` function happens within constant evaluation. Furthermore, under C++20/C++23 immediate escalation rules, a call to a `consteval` function inside a `constexpr` function or immediate-escalating context can promote/escalate requirements so the surrounding context itself must evaluate as a constant expression if needed.
 
 ### `constinit` (Guaranteed Constant Initialization, C++20)
 
 `constinit` is a variable specifier with strict rules on **where** it can appear and **what** it guarantees.
 
-* **Storage duration restriction:** `constinit` may only be applied to variables with **static storage duration** (namespace-scope variables and `static` variables) or **thread storage duration** (`thread_local` variables). It **cannot** be used on automatic (local stack) variables inside a function.
-* **Eliminates the Static Initialization Order Fiasco (SIOF):** In C++, variables with static storage duration across different `.cpp` files that require *dynamic* initialization have an unspecified initialization order across translation units. If `file_b.cpp` reads a global from `file_a.cpp` during dynamic startup before `file_a.cpp` initializes it, you hit SIOF (undefined behavior). `constinit` requires **constant initialization**, which happens before dynamic initialization (and can be performed at compile time / placed in static data segments with zero runtime initialization order hazard).
-* **Mutability preserved:** `constinit` does **not** imply `const`. For example, `constinit int g_hits = 0;` is non-`const` and can be incremented (`++g_hits;`) at runtime. If you want both constant initialization and read-only enforcement, you write `constinit const int` (or `constexpr`).
+- **Storage duration restriction:** `constinit` may only be applied to variables with **static storage duration** (namespace-scope variables and `static` variables) or **thread storage duration** (`thread_local` variables). It **cannot** be used on automatic (local stack) variables inside a function.
+- **Eliminates the Static Initialization Order Fiasco (SIOF):** In C++, variables with static storage duration across different `.cpp` files that require *dynamic* initialization have an unspecified initialization order across translation units. If `file_b.cpp` reads a global from `file_a.cpp` during dynamic startup before `file_a.cpp` initializes it, you hit SIOF (undefined behavior). `constinit` requires **constant initialization**, which happens before dynamic initialization (and can be performed at compile time / placed in static data segments with zero runtime initialization order hazard).
+- **Mutability preserved:** `constinit` does **not** imply `const`. For example, `constinit int g_hits = 0;` is non-`const` and can be incremented (`++g_hits;`) at runtime. If you want both constant initialization and read-only enforcement, you write `constinit const int` (or `constexpr`).
 
 ### Detecting constant evaluation: `std::is_constant_evaluated()` (C++20) and `if consteval` (C++23)
 
 Sometimes a single function can run both at compile time and at runtime, but you want a **different implementation** in each mode — for example, a pure portable loop at compile time and a hardware/library-accelerated path at runtime.
 
-* **`std::is_constant_evaluated()` (C++20, in `<type_traits>`):** Returns `true` when evaluated within a manifestly constant-evaluated expression (such as initializing a `constexpr` variable, a `static_assert`, or a `consteval` call), and `false` during normal runtime evaluation.
-* **Why `if constexpr (std::is_constant_evaluated())` is a classic bug:** `if constexpr` requires its condition to be a **constant expression** and evaluates it at compile time. Because a call to `std::is_constant_evaluated()` is itself a constant expression returning `true` when evaluated as a constant expression, `if constexpr (std::is_constant_evaluated())` evaluates to `true` and discards the `else` branch at compile time — making the runtime branch dead code! Always use a regular runtime `if (std::is_constant_evaluated())` so the compiler emits both branches and chooses at runtime when not in a constant-evaluated context.
-* **`if consteval` (C++23):** C++23 introduces `if consteval { ... } else { ... }` as dedicated syntax for selecting the constant-evaluated vs. non-constant-evaluated branch cleanly without needing to call `std::is_constant_evaluated()` inside an `if` condition.
+- **`std::is_constant_evaluated()` (C++20, in `<type_traits>`):** Returns `true` when evaluated within a manifestly constant-evaluated expression (such as initializing a `constexpr` variable, a `static_assert`, or a `consteval` call), and `false` during normal runtime evaluation.
+- **Why `if constexpr (std::is_constant_evaluated())` is a classic bug:** `if constexpr` requires its condition to be a **constant expression** and evaluates it at compile time. Because a call to `std::is_constant_evaluated()` is itself a constant expression returning `true` when evaluated as a constant expression, `if constexpr (std::is_constant_evaluated())` evaluates to `true` and discards the `else` branch at compile time — making the runtime branch dead code! Always use a regular runtime `if (std::is_constant_evaluated())` so the compiler emits both branches and chooses at runtime when not in a constant-evaluated context.
+- **`if consteval` (C++23):** C++23 introduces `if consteval { ... } else { ... }` as dedicated syntax for selecting the constant-evaluated vs. non-constant-evaluated branch cleanly without needing to call `std::is_constant_evaluated()` inside an `if` condition.
 
 ### Comparison of the four keywords
 
@@ -171,22 +169,21 @@ consteval int strict_square(int n) {
 }
 
 int main() {
-    constexpr int c1 = flex_square(6);   // Compile time
-    constexpr int c2 = strict_square(6); // Compile time
+    constexpr int c1 = flex_square(6);    // Compile time
+    constexpr int c2 = strict_square(6);  // Compile time
 
     int runtime_val = 6;
-    int r1 = flex_square(runtime_val);   // Compiles: silently runs at runtime
+    int r1 = flex_square(runtime_val);  // Compiles: silently runs at runtime
     std::cout << "flex_square(runtime): " << r1 << "\n";
 
-    // int r2 = strict_square(runtime_val); // Error: call to consteval function
-    //                                      // 'strict_square' is not a constant expression
+    // int r2 = strict_square(runtime_val);  // Error: call to consteval function
+    //                                       // 'strict_square' is not a constant expression
     std::cout << "c1=" << c1 << ", c2=" << c2 << "\n";
 }
-
 ```
 
-* `flex_square` accepts `runtime_val` and runs at runtime without complaint.
-* `strict_square` rejects `runtime_val` at compile time because `runtime_val` is not a constant expression.
+- `flex_square` accepts `runtime_val` and runs at runtime without complaint.
+- `strict_square` rejects `runtime_val` at compile time because `runtime_val` is not a constant expression.
 
 ### Step 2 — Use `constinit` for safe mutable static/thread-local state
 
@@ -212,12 +209,11 @@ int main() {
     // static or thread_local:
     // constinit int local_bad = 10;
 }
-
 ```
 
-* `g_event_count` and `tl_scratch` are constant-initialized with `0` and `1`, avoiding dynamic cross-file initialization order hazards.
-* Both remain normal mutable variables (`++g_event_count`, `tl_scratch *= 2`) at runtime.
-* Putting `constinit` on a local variable (`local_bad`) is rejected by the compiler.
+- `g_event_count` and `tl_scratch` are constant-initialized with `0` and `1`, avoiding dynamic cross-file initialization order hazards.
+- Both remain normal mutable variables (`++g_event_count`, `tl_scratch *= 2`) at runtime.
+- Putting `constinit` on a local variable (`local_bad`) is rejected by the compiler.
 
 ### Step 3 — Dual-path evaluation with `std::is_constant_evaluated()`
 
@@ -259,12 +255,11 @@ int main() {
 
     std::cout << "runtime_len = " << runtime_len << "\n";
 }
-
 ```
 
-* `static_assert(smart_strlen("hello") == 5)` forces constant evaluation, where `std::is_constant_evaluated()` returns `true`.
-* `smart_strlen(dynamic_ptr)` is evaluated at runtime, where `std::is_constant_evaluated()` returns `false` and takes the runtime branch.
-* Notice we used a plain `if (...)` rather than `if constexpr (...)` so both branches remain available according to the evaluation context.
+- `static_assert(smart_strlen("hello") == 5)` forces constant evaluation, where `std::is_constant_evaluated()` returns `true`.
+- `smart_strlen(dynamic_ptr)` is evaluated at runtime, where `std::is_constant_evaluated()` returns `false` and takes the runtime branch.
+- Notice we used a plain `if (...)` rather than `if constexpr (...)` so both branches remain available according to the evaluation context.
 
 ::: tip Key insight
 `consteval` guarantees **when a function's result is computed** (always compile time), whereas `constinit` guarantees **how a static/`thread_local` variable is initialized** (constant initialization) while keeping it **mutable at runtime**.
@@ -275,11 +270,9 @@ int main() {
 ### Pitfall 1 — Assuming `constinit` makes a variable `const` (read-only)
 
 ::: danger False
-
 ```cpp
 constinit int g_state = 1;
 g_state = 2;  // Valid! constinit does NOT make g_state const.
-
 ```
 
 `constinit` only requires constant initialization; it does not add `const` qualification.
@@ -288,13 +281,11 @@ g_state = 2;  // Valid! constinit does NOT make g_state const.
 ### Pitfall 2 — Using `constinit` on a local stack variable
 
 ::: danger False
-
 ```cpp
 void f() {
     constinit int x = 42;  // Error: 'constinit' may only be applied to a variable
                            // with static or thread storage duration
 }
-
 ```
 
 Local variables inside functions have automatic storage duration by default, so `constinit` cannot be used on them.
@@ -303,14 +294,12 @@ Local variables inside functions have automatic storage duration by default, so 
 ### Pitfall 3 — Taking a runtime function pointer to a `consteval` function
 
 ::: danger False
-
 ```cpp
 consteval int add_one(int x) { return x + 1; }
 
 int main() {
     // auto p = &add_one;  // Error: cannot take address of immediate function
 }
-
 ```
 
 Immediate functions do not exist as ordinary runtime function entities with a runtime address.
@@ -319,7 +308,6 @@ Immediate functions do not exist as ordinary runtime function entities with a ru
 ### Pitfall 4 — Writing `if constexpr (std::is_constant_evaluated())`
 
 ::: danger False
-
 ```cpp
 constexpr int f() {
     if constexpr (std::is_constant_evaluated()) {  // Buggy pattern!
@@ -328,7 +316,6 @@ constexpr int f() {
         return 2;
     }
 }
-
 ```
 
 Because `if constexpr` evaluates its condition as a constant expression at compile time, `std::is_constant_evaluated()` is `true` during that check, discarding the `else` branch even when `f()` is later called at runtime. Use `if (std::is_constant_evaluated())` (or `if consteval` in C++23).
@@ -337,7 +324,8 @@ Because `if constexpr` evaluates its condition as a constant expression at compi
 ### Pitfall 5 — Confusing `constexpr` variables (always `const`) with `constinit` variables
 
 ::: warning Subtle distinction
-A `constexpr` variable is always implicitly `const` (read-only). A `constinit int x = 0;` variable is **mutable** at runtime; only `constinit const int y = 0;` is both constant-initialized and `const`.
+A `constexpr` variable is always implicitly `const` (read-only).
+A `constinit int x = 0;` variable is **mutable** at runtime; only `constinit const int y = 0;` is both constant-initialized and `const`.
 :::
 
 ## Practice Check
@@ -366,7 +354,6 @@ constexpr int maybe_eval(int x) {
         return x * 10;
     }
 }
-
 ```
 
 **Exercise 3.** Pick the most fitting keyword (`consteval`, `constinit`, `constexpr`, or `const`) for each requirement:
@@ -379,7 +366,6 @@ constexpr int maybe_eval(int x) {
 ### Solutions
 
 ::: details Exercise 1 — validity and runtime mutability
-
 1. **Valid; mutable at runtime:** `counter` has static storage duration, is constant-initialized to `0`, and is not `const`, so `counter = 5;` is allowed.
 2. **Valid; NOT mutable at runtime:** `constinit const int` enforces constant initialization and makes `limit` `const`, so `limit = 200;` fails to compile.
 3. **Invalid (compile error):** `local_v` has automatic storage duration, not static or `thread_local` storage duration.
@@ -388,7 +374,6 @@ constexpr int maybe_eval(int x) {
 :::
 
 ::: details Exercise 2 — fixing `if constexpr (std::is_constant_evaluated())`
-
 Replace `if constexpr (std::is_constant_evaluated())` with `if (std::is_constant_evaluated())` (or `if consteval` in C++23):
 
 ```cpp
@@ -405,14 +390,12 @@ constexpr int maybe_eval(int x) {
         return x * 10;
     }
 }
-
 ```
 
 With `if constexpr`, the condition was evaluated in a constant-expression context and forced the `else` branch to be discarded at compile time. With plain `if`, `std::is_constant_evaluated()` accurately reflects whether the call to `maybe_eval` itself is being constant-evaluated.
 :::
 
 ::: details Exercise 3 — matching keywords to requirements
-
 1. **`consteval`:** Guarantees compile-time evaluation and rejects runtime-only inputs with a compiler error.
 2. **`constinit`:** Guarantees constant initialization for static/`thread_local` storage (preventing SIOF) while keeping the variable mutable at runtime.
 3. **`constexpr`:** Allows compile-time evaluation (e.g., in `static_assert`) while also permitting runtime calls.
@@ -421,10 +404,10 @@ With `if constexpr`, the condition was evaluated in a constant-expression contex
 
 ## Summary
 
-* `consteval` (C++20) defines an **immediate function** that must evaluate at compile time on every potentially-evaluated call and has no runtime address.
-* `constinit` (C++20) enforces **constant initialization** on static or `thread_local` variables to prevent the Static Initialization Order Fiasco while preserving **runtime mutability**.
-* Never write `if constexpr (std::is_constant_evaluated())`; use `if (std::is_constant_evaluated())` in C++20 or `if consteval` in C++23.
-* Choose `const` for runtime read-only protection, `constexpr` for compile-time constants and flexible dual-context functions, `consteval` for strict compile-time-only functions, and `constinit` for constant-initialized mutable static/`thread_local` state.
+- `consteval` (C++20) defines an **immediate function** that must evaluate at compile time on every potentially-evaluated call and has no runtime address.
+- `constinit` (C++20) enforces **constant initialization** on static or `thread_local` variables to prevent the Static Initialization Order Fiasco while preserving **runtime mutability**.
+- Never write `if constexpr (std::is_constant_evaluated())`; use `if (std::is_constant_evaluated())` in C++20 or `if consteval` in C++23.
+- Choose `const` for runtime read-only protection, `constexpr` for compile-time constants and flexible dual-context functions, `consteval` for strict compile-time-only functions, and `constinit` for constant-initialized mutable static/`thread_local` state.
 
 ## Quick Reference
 
