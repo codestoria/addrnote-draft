@@ -134,7 +134,7 @@ That third rule creates a classic surprise with pointers. Recall that top-level 
 - `nullptr` (or `0`), or
 - The address of an object with **static storage duration** (a global/namespace-scope variable, a `static` local variable, or a `static` class data member), or a function.
 
-Binding a `constexpr` pointer to an automatic (stack-allocated) local variable is forbidden because stack frame addresses do not exist at compile time.
+Binding a `constexpr` pointer to an automatic (stack-allocated) local variable is forbidden because stack frame addresses are not fixed compile-time constant addresses across program execution.
 
 | Declaration | Equivalent Type | Can reassign `p`? | Can modify `*p`? | Valid Target Address |
 | --- | --- | --- | --- | --- |
@@ -256,7 +256,7 @@ int main() {
 ```cpp
 #include <iostream>
 
-// Uses C++14 local variables and loops inside a constexpr function
+// Uses C++14 local variables and loops inside a constexpr function (small n to avoid uint64 wrap-around)
 constexpr unsigned long long factorial(unsigned int n) {
     unsigned long long result = 1;
     for (unsigned int i = 2; i <= n; ++i) {
