@@ -380,13 +380,15 @@ int main() {
 }
 ```
 
-Storing the result in a non-`constexpr` variable (`int a`) does not require a constant expression. While an optimizer *may* fold `square(10)` into `100`, the language neither forces compile-time evaluation nor guarantees runtime evaluation here — compile-time evaluation is only guaranteed in a constant-expression context (or via C++20 `consteval`).
+Storing the result in a non-`constexpr` variable (`int a`) does not require a constant expression.
+While an optimizer *may* fold `square(10)` into `100`, the language neither forces compile-time evaluation nor guarantees runtime evaluation here — compile-time evaluation is only guaranteed in a constant-expression context (or via C++20 `consteval`).
 :::
 
 ### Pitfall 2 — Thinking `constexpr int* p` makes `*p` read-only
 
 ::: danger False
-`constexpr` applies top-level `const` to the declared entity `p`, turning `constexpr int* p` into `int* const p`. The pointer cannot be reassigned, but `*p` can still be modified unless you explicitly add low-level `const`: `constexpr const int* p`.
+`constexpr` applies top-level `const` to the declared entity `p`, turning `constexpr int* p` into `int* const p`.
+The pointer cannot be reassigned, but `*p` can still be modified unless you explicitly add low-level `const`: `constexpr const int* p`.
 :::
 
 ### Pitfall 3 — Binding a `constexpr` pointer to a local stack variable
@@ -424,7 +426,9 @@ A `constexpr` function definition can be completely valid yet fail to compile fo
 ### Pitfall 5 — Assuming namespace-scope `constexpr` variables are implicitly `inline`
 
 ::: warning Functions vs. variables
-`constexpr` functions are implicitly `inline`, so putting them in a header file is safe. Namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default). In C++17 and later, if you define a `constexpr` constant in a header and want a single entity shared across all translation units (important if you take its address `&kConst`), declare it `inline constexpr`.
+`constexpr` functions are implicitly `inline`, so putting them in a header file is safe.
+Namespace-scope `constexpr` variables are **not** implicitly `inline` (they have internal linkage by default).
+In C++17 and later, if you define a `constexpr` constant in a header and want a single entity shared across all translation units (important if you take its address `&kConst`), declare it `inline constexpr`.
 :::
 
 ### Pitfall 6 — Expecting `if constexpr` to ignore syntax errors or work outside templates
