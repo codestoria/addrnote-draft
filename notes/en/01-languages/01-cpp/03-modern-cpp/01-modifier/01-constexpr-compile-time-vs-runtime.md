@@ -1,10 +1,10 @@
 ---
-title: 'constexpr: Compile-Time vs. Runtime Evaluation'
+title: 'constexpr and if constexpr'
 description: Build a clear mental model of compile-time vs. runtime evaluation, constexpr variables and pointers, dual-mode functions across C++11–C++20, literal types, and if constexpr.
 outline: deep
 ---
 
-# `constexpr`: Compile-Time vs. Runtime Evaluation
+# Compile-Time vs. Runtime Evaluation: `constexpr` and `if constexpr`
 
 ::: tip What you'll learn
 - Separate **mutability** (`const`) from **evaluation time** (`constexpr`) as two independent dimensions
@@ -126,8 +126,8 @@ A `constexpr` variable declaration obeys three strict rules:
 
 That third rule creates a classic surprise with pointers. Recall that top-level `const` applies to the **pointer object itself**, not the pointee:
 
-* `constexpr int* p = &global_x;` is equivalent to **`int* const p = &global_x;`** — the pointer `p` cannot be aimed at another address, **but `*p` can still be modified** if `global_x` is non-`const`.
-* `constexpr const int* p = &global_x;` is equivalent to **`const int* const p = &global_x;`** — neither the pointer `p` nor the pointed-to integer `*p` can be modified through `p`.
+- `constexpr int* p = &global_x;` is equivalent to **`int* const p = &global_x;`** — the pointer `p` cannot be aimed at another address, **but `*p` can still be modified** if `global_x` is non-`const`.
+- `constexpr const int* p = &global_x;` is equivalent to **`const int* const p = &global_x;`** — neither the pointer `p` nor the pointed-to integer `*p` can be modified through `p`.
 
 **Address constant expression restriction:** When a `constexpr` pointer (or reference) binds to an address, that address must remain constant across the lifetime of the program. Therefore, a `constexpr` pointer may only be initialized with:
 
