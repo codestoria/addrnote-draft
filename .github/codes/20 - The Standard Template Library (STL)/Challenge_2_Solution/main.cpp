@@ -120,7 +120,7 @@ int main() {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
             std::cout << "Adding and playing new song" << std::endl;
 
-            std::cout << "Enter song name:";
+            std::cout << "Enter song name: ";
             getline(std::cin, name);
             std::cout << "Enter song artist: ";
             getline(std::cin, artist);
