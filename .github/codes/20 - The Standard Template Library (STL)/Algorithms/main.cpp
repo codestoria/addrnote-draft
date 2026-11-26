@@ -10,6 +10,7 @@
 class Person {
     std::string name;
     int age;
+
 public:
     Person() = default;
     Person(std::string name, int age)
