@@ -1,21 +1,24 @@
 // Section 20
 // Vector
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 
 class Person {
     friend std::ostream &operator<<(std::ostream &os, const Person &p);
     std::string name;
     int age;
+
 public:
     Person() = default;
-    Person(std::string name, int age) 
-        : name{name}, age{age}  {}
+    Person(std::string name, int age)
+        : name{name}, age{age} {}
+
     bool operator<(const Person &rhs) const {
         return this->age < rhs.age;
     }
+
     bool operator==(const Person &rhs) const {
         return (this->name == rhs.name && this->age == rhs.age);
     }
@@ -26,91 +29,89 @@ std::ostream &operator<<(std::ostream &os, const Person &p) {
     return os;
 }
 
-// Use for_each and a lambda expression to display vector elements
+// Use std::for_each and a lambda to print vector elements
 void display2(const std::vector<int> &vec) {
     std::cout << "[ ";
     std::for_each(vec.begin(), vec.end(),
-        [](int x) { std::cout << x << " ";});
+        [](int x) { std::cout << x << " "; });
     std::cout << "]" << std::endl;
 }
 
-// template function to display any vector
+// Generic template function to print any vector
 template <typename T>
 void display(const std::vector<T> &vec) {
     std::cout << "[ ";
-    for (const auto &elem: vec)
+    for (const auto &elem : vec)
         std::cout << elem << " ";
-    std::cout <<  "]"<< std::endl;
+    std::cout << "]" << std::endl;
 }
-
 
 void test1() {
     std::cout << "\nTest1 =========================" << std::endl;
 
-    std::vector<int> vec {1,2,3,4,5};
+    std::vector<int> vec {1, 2, 3, 4, 5};
     display(vec);
-    
-    vec = {2,4,5,6};
+
+    vec = {2, 4, 5, 6};
     display2(vec);
-    
-    std::vector<int> vec1 (10, 100);    // ten 100s in the vector
+
+    std::vector<int> vec1(10, 100);  // Initialize vector with ten copies of 100
     display(vec1);
 }
 
 void test2() {
     std::cout << "\nTest2 =========================" << std::endl;
 
-    std::vector<int> vec {1,2,3,4,5};
+    std::vector<int> vec {1, 2, 3, 4, 5};
     display(vec);
     std::cout << "\nvec size: " << vec.size() << std::endl;
     std::cout << "vec max size: " << vec.max_size() << std::endl;
     std::cout << "vec capacity: " << vec.capacity() << std::endl;
-    
+
     vec.push_back(6);
     display(vec);
     std::cout << "\nvec size: " << vec.size() << std::endl;
     std::cout << "vec max size: " << vec.max_size() << std::endl;
     std::cout << "vec capacity: " << vec.capacity() << std::endl;
-    
-    vec.shrink_to_fit();    // C++11
+
+    vec.shrink_to_fit();  // C++11: reduce capacity to match current size
     display(vec);
     std::cout << "\nvec size: " << vec.size() << std::endl;
     std::cout << "vec max size: " << vec.max_size() << std::endl;
     std::cout << "vec capacity: " << vec.capacity() << std::endl;
-    
-    vec.reserve(100);
+
+    vec.reserve(100);  // Preallocate space for at least 100 elements
     display(vec);
     std::cout << "\nvec size: " << vec.size() << std::endl;
     std::cout << "vec max size: " << vec.max_size() << std::endl;
     std::cout << "vec capacity: " << vec.capacity() << std::endl;
-    
 }
+
 void test3() {
     std::cout << "\nTest3 =========================" << std::endl;
 
-    std::vector<int> vec {1,2,3,4,5};
+    std::vector<int> vec {1, 2, 3, 4, 5};
     display(vec);
-    
+
     vec[0] = 100;
     vec.at(1) = 200;
-    
     display(vec);
 }
 
 void test4() {
     std::cout << "\nTest4 =========================" << std::endl;
     std::vector<Person> stooges;
-    
+
     Person p1 {"Larry", 18};
     display(stooges);
-    
+
     stooges.push_back(p1);
     display(stooges);
-    
+
     stooges.push_back(Person{"Moe", 25});
     display(stooges);
-    
-    stooges.emplace_back("Curly", 30);      // Use emplace_back!!!
+
+    stooges.emplace_back("Curly", 30);  // Construct the object directly in place (preferred)
     display(stooges);
 }
 
@@ -122,46 +123,48 @@ void test5() {
         {"Moe", 25},
         {"Curly", 30}
     };
-    
     display(stooges);
+
     std::cout << "\nFront: " << stooges.front() << std::endl;
     std::cout << "Back: " << stooges.back() << std::endl;
-    
+
     stooges.pop_back();
     display(stooges);
 }
 
 void test6() {
     std::cout << "\nTest6 =========================" << std::endl;
-    std::vector<int> vec {1,2,3,4,5};
+
+    std::vector<int> vec {1, 2, 3, 4, 5};
     display(vec);
-    
-    vec.clear();    // remove all elements
+
+    vec.clear();  // Remove all elements from the vector
     display(vec);
-    
-    vec = {1,2,3,4,5,6,7,8,9,10};
+
+    vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     display(vec);
+
     vec.erase(vec.begin(), vec.begin() + 2);
     display(vec);
-    
-    vec = {1,2,3,4,5,6,7,8,9,10};
-    // erase all even numbers
+
+    vec = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    // Erase all even numbers
     auto it = vec.begin();
     while (it != vec.end()) {
-        if (*it %2 == 0)
-            vec.erase(it);  
+        if (*it % 2 == 0)
+            vec.erase(it);
         else
-            it++;   // only increment if not erased!
+            it++;  // Only advance the iterator when no element is erased
     }
     display(vec);
 }
 
 void test7() {
     std::cout << "\nTest7 =========================" << std::endl;
-    
-    std::vector<int> vec1 {1,2,3,4,5};
-    std::vector<int> vec2 {10,20,30,40,50};
-    
+
+    std::vector<int> vec1 {1, 2, 3, 4, 5};
+    std::vector<int> vec2 {10, 20, 30, 40, 50};
+
     display(vec1);
     display(vec2);
     std::cout << std::endl;
@@ -172,28 +175,24 @@ void test7() {
 }
 
 void test8() {
-    std::cout << "\nTest8  =========================" << std::endl;
+    std::cout << "\nTest8 =========================" << std::endl;
 
-    std::vector<int> vec1 {1,21,3,40,12};    
-    
+    std::vector<int> vec1 {1, 21, 3, 40, 12};
     display(vec1);
+
     std::sort(vec1.begin(), vec1.end());
     display(vec1);
 }
 
 void test9() {
-    // std::back_inserter contructs a back-insert iterator that inserts new elements 
-    // at the end of the container it applied to. It's a special output iterator
-    // It's awesome!!!!   and  very efficient
-    // There is also a front_inserter we can use with deques and lists
-    // Copy one list to another using an iterator and back_inserter
-    
-    std::cout << "\nTest9  =========================" << std::endl;
-    
-    std::vector<int> vec1 {1,2,3,4,5};   
-    std::vector<int> vec2 {10,20};
-    
-    display(vec1); 
+    // std::back_inserter creates an output iterator that appends elements
+    // to the target container. There is also std::front_inserter for deque and list.
+    std::cout << "\nTest9 =========================" << std::endl;
+
+    std::vector<int> vec1 {1, 2, 3, 4, 5};
+    std::vector<int> vec2 {10, 20};
+
+    display(vec1);
     display(vec2);
     std::cout << std::endl;
 
@@ -202,56 +201,46 @@ void test9() {
     display(vec2);
     std::cout << std::endl;
 
-    
-    // Copy_if the element is even
-    
-    vec1 = {1,2,3,4,5,6,7,8,9,10};
-    vec2 = {10,20};
-    
+    // Copy only elements that satisfy the predicate (even values)
+    vec1 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    vec2 = {10, 20};
+
     display(vec1);
     display(vec2);
     std::cout << std::endl;
-    
+
     std::copy_if(vec1.begin(), vec1.end(), std::back_inserter(vec2),
-            [](int x) { return x%2 == 0; });
+        [](int x) { return x % 2 == 0; });
     display(vec1);
     display(vec2);
-    
-    
 }
 
 void test10() {
-    std::cout << "\nTest10  =========================" << std::endl;
-    // transform over 2 ranges
-    
-    std::vector<int> vec1 {1,2,3,4,5};   
-    std::vector<int> vec2 {10,20,30,40,50};
+    std::cout << "\nTest10 =========================" << std::endl;
+
+    // Transform values from two input ranges
+    std::vector<int> vec1 {1, 2, 3, 4, 5};
+    std::vector<int> vec2 {10, 20, 30, 40, 50};
     std::vector<int> vec3;
-    
-    
-    // 1*10, 2*20, 3*30, 4*40, 5*50 and store the results in vec3
+
+    // Multiply paired elements: 1*10, 2*20, 3*30, 4*40, 5*50 and store results
     std::transform(vec1.begin(), vec1.end(), vec2.begin(),
         std::back_inserter(vec3),
-        [](int x, int y) { return x * y;});
-        
+        [](int x, int y) { return x * y; });
     display(vec3);
-    
 }
 
-
-
-// Insertion from another vector
-// Insert vec2 into vec1 before the 5
+// Insert all elements from vec2 into vec1 before the element with value 5
 void test11() {
-    std::cout << "\nTest11  =========================" << std::endl;
-    std::vector<int> vec1 {1,2,3,4,5,6,7,8,9,10};
-    std::vector<int> vec2 {100,200,300,400};
-    
+    std::cout << "\nTest11 =========================" << std::endl;
+
+    std::vector<int> vec1 {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    std::vector<int> vec2 {100, 200, 300, 400};
+
     display(vec1);
     display(vec2);
     std::cout << std::endl;
 
-    
     auto it = std::find(vec1.begin(), vec1.end(), 5);
     if (it != vec1.end()) {
         std::cout << "inserting..." << std::endl;
@@ -262,8 +251,7 @@ void test11() {
     display(vec1);
 }
 
-int main()  {    
-
+int main() {
     test1();
     test2();
     test3();
@@ -275,6 +263,6 @@ int main()  {
     test9();
     test10();
     test11();
-    
+
     return 0;
 }
