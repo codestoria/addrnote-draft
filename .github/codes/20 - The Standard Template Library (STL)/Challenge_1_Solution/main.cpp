@@ -19,15 +19,19 @@ bool is_palindrome(const std::string& s)
 
     char c1{};
     char c2{};
+
     // Compare front and back characters, remove them after each comparison
     while (d.size() > 1) {
         c1 = d.front();
-        c2 = d.back();
         d.pop_front();
+
+        c2 = d.back();
         d.pop_back();
+
         if (c1 != c2)
             return false;
     }
+
     return true;
 }
 
