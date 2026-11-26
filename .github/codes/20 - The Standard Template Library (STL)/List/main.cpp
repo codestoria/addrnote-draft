@@ -1,6 +1,7 @@
 // Section 20
 // List
 #include <iostream>
+#include <string>
 #include <list>
 #include <algorithm>
 #include <iterator>  // For std::advance

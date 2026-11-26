@@ -87,8 +87,8 @@ void test4() {
     }
 
     // Constant reverse iterator over a list of strings
-    std::list<std::string> name {"Larry", "Moe", "Curly"};
-    auto it2 = name.crbegin();  // Const reverse iterator pointing to "Curly"
+    std::list<std::string> names {"Larry", "Moe", "Curly"};
+    auto it2 = names.crbegin();  // Const reverse iterator pointing to "Curly"
     std::cout << *it2 << std::endl;
     it2++;  // Points to "Moe"
     std::cout << *it2 << std::endl;
