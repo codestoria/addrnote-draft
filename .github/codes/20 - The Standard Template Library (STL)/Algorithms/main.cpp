@@ -1,6 +1,7 @@
 // Section 20
 // Algorithms
 #include <iostream>
+#include <cctype>
 #include <vector>
 #include <list>
 #include <algorithm>
