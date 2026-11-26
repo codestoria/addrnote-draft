@@ -72,7 +72,7 @@ void test3() {
     // Attempting to assign through a const_iterator will produce a compile error
     it1 = nums1.begin();
     while (it1 != nums1.end()) {
-        // *it1 = 0;   // Compile error - read-only access
+        // *it1 = 0;  // Compile error - read-only access
         it1++;
     }
 }
@@ -80,7 +80,7 @@ void test3() {
 void test4() {
     // Reverse iterator: traverses the vector from last element toward first
     std::vector<int> vec {1, 2, 3, 4};
-    auto it1 = vec.rbegin();    // Reverse iterator starting at element 4
+    auto it1 = vec.rbegin();  // Reverse iterator starting at element 4
     while (it1 != vec.rend()) {
         std::cout << *it1 << std::endl;
         it1++;
@@ -90,7 +90,7 @@ void test4() {
     std::list<std::string> name {"Larry", "Moe", "Curly"};
     auto it2 = name.crbegin();  // Const reverse iterator pointing to "Curly"
     std::cout << *it2 << std::endl;
-    it2++;                      // Points to "Moe"
+    it2++;  // Points to "Moe"
     std::cout << *it2 << std::endl;
 
     // Iterator over a map, visiting key-value pairs
@@ -99,7 +99,7 @@ void test4() {
         {"Bill", "Java"},
         {"James", "Haskell"}
     };
-    auto it3 = favorites.begin();   // Iterator over map<string, string> pairs
+    auto it3 = favorites.begin();  // Iterator over map<string, string> pairs
     while (it3 != favorites.end()) {
         std::cout << it3->first << " : " << it3->second << std::endl;
         it3++;
