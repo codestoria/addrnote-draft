@@ -152,7 +152,7 @@ void test6() {
     auto it = vec.begin();
     while (it != vec.end()) {
         if (*it % 2 == 0)
-            vec.erase(it);
+            it = vec.erase(it);
         else
             it++;  // Only advance the iterator when no element is erased
     }

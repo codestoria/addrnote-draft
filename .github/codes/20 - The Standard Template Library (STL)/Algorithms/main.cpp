@@ -112,7 +112,9 @@ void string_transform_test() {
 
     std::string str1 {"This is a test"};
     std::cout << "Before transform: " << str1 << std::endl;
-    std::transform(str1.begin(), str1.end(), str1.begin(), ::toupper);
+    std::transform(str1.begin(), str1.end(), str1.begin(), [](unsigned char c) {
+        return static_cast<char>(std::toupper(c));
+    });
     std::cout << "After transform: " << str1 << std::endl;
 }
 
