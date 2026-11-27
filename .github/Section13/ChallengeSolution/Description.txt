@@ -14,7 +14,7 @@ class Movie - models a movie which includes
 
 class Movies - models a collection of movie objects
 
-Obviously, Movies needs to know about Movie since it is a collection of Movie object
+Obviously, Movies needs to know about Movie since it is a collection of Movie objects
 However, our main driver should only interact with the Movies class.
 
 For example, a simple main should be able to
@@ -23,7 +23,7 @@ For example, a simple main should be able to
 - ask the Movies object to increment the watched count by 1 for a movie given its name
 - ask the Movies object to display all of its movies
 
-Additionally, 
+Additionally,
 - if we try to add a movie whose name is already in the movies collection 
 we should display this error to the user
 - if we try to increment the watched count for a movie whose name is not in the movies
@@ -107,23 +107,23 @@ int main() {
     Movies my_movies;
     my_movies.display();
 
-    add_movie(my_movies, "Big", "PG-13",2);     // OK
-    add_movie(my_movies,"Star Wars", "PG",5);   // OK
-    add_movie(my_movies,"Cinderella", "PG",7);  // OK
+    add_movie(my_movies, "Big", "PG-13", 2);      // OK
+    add_movie(my_movies, "Star Wars", "PG", 5);   // OK
+    add_movie(my_movies, "Cinderella", "PG", 7);  // OK
 
     my_movies.display();  // Big, Star Wars, Cinderella
 
-    add_movie(my_movies,"Cinderella", "PG",7);  // Already exists
-    add_movie(my_movies,"Ice Age", "PG",12);    // OK
+    add_movie(my_movies, "Cinderella", "PG", 7);  // Already exists
+    add_movie(my_movies, "Ice Age", "PG", 12);    // OK
 
     my_movies.display();  // Big, Star Wars, Cinderella, Ice Age
 
-    increment_watched(my_movies,"Big");      // OK
-    increment_watched(my_movies,"Ice Age");  // OK
+    increment_watched(my_movies, "Big");      // OK
+    increment_watched(my_movies, "Ice Age");  // OK
 
     my_movies.display();  // Big and Ice Age watched count incremented by 1
 
-    increment_watched(my_movies,"XXX");  // XXX not found
+    increment_watched(my_movies, "XXX");  // XXX not found
 
 	return 0;
 }
