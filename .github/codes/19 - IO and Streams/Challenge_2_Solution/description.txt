@@ -2,7 +2,7 @@ Section 19
 Challenge 2
 Automated Grader
 
-Write a program that reads a file named 'responses.txt" that contains the answer key for a quiz
+Write a program that reads a file named "responses.txt" that contains the answer key for a quiz
 as well as student responses for the quiz.
 
 The answer key is the first item in the file.
