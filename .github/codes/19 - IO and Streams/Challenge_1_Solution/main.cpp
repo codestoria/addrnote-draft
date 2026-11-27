@@ -43,7 +43,7 @@ int main() {
             },
             {
                 "Brazil", {
-                    { "Rio de Janiero", 13500000, 567.45 },
+                    { "Rio de Janeiro", 13500000, 567.45 },
                     { "Sao Paulo", 11310000, 975.45 },
                     { "Salvador", 18234000, 855.99 }
                 },
