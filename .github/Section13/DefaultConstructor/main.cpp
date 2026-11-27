@@ -5,19 +5,15 @@
 
 using namespace std;
 
-class Player
-{
+class Player {
 private:
-   std::string name;
-   int health;
-   int xp;
+    std::string name;
+    int health;
+    int xp;
+
 public:
-    void set_name(std::string name_val) { 
-        name = name_val; 
-    }
-    std::string get_name() {
-        return name;
-    }
+    void set_name(std::string name_val) { name = name_val; }
+    std::string get_name() { return name; }
     Player() {
         name = "None";
         health = 100;
@@ -28,14 +24,12 @@ public:
         health = health_val;
         xp = xp_val;
     }
-    
 };
 
 int main() {
     Player hero;
-    Player frank {"Frank", 100, 13};
+    Player frank{"Frank", 100, 13};
     frank.set_name("Frank");
     cout << frank.get_name() << endl;
     return 0;
 }
-

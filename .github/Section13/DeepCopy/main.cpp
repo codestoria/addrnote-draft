@@ -7,6 +7,7 @@ using namespace std;
 class Deep {
 private:
     int *data;
+
 public:
     void set_data_value(int d) { *data = d; }
     int get_data_value() { return *data; }
@@ -23,8 +24,7 @@ Deep::Deep(int d) {
     *data = d;
 }
 
-Deep::Deep(const Deep &source)
-    : Deep {*source.data} {
+Deep::Deep(const Deep &source) : Deep{*source.data} {
     cout << "Copy constructor  - deep copy" << endl;
 }
 
@@ -38,14 +38,13 @@ void display_deep(Deep s) {
 }
 
 int main() {
-    
-    Deep obj1 {100};
+
+    Deep obj1{100};
     display_deep(obj1);
-    
-    Deep obj2 {obj1};
-    
+
+    Deep obj2{obj1};
+
     obj2.set_data_value(1000);
-  
+
     return 0;
 }
-
