@@ -22,10 +22,10 @@ void print_header() {
 }
 
 void print_footer(double average) {
-    std::cout << std::setw(20) << std::setfill('-') << "" << std::endl;
+    std::cout << std::setw(30) << std::setfill('-') << "" << '\n';
     std::cout << std::setfill(' ');
-    std::cout << std::setw(15) << std::left << "Average score"
-              << std::setw(5) << std::right << average;
+    std::cout << std::setw(25) << std::left << "Average score"
+              << std::setw(5) << std::right << average << '\n';
 }
 
 void print_student(const std::string &student, int score) {
@@ -78,8 +78,9 @@ int main() {
 
     print_footer(average_score);
 
-    in_file.close();
-    std::cout << std::endl << std::endl;
+    if (in_file.bad()) {
+        std::cerr << "Error reading file\n";
+        return 1;
+    }
 
     return 0;
-}
