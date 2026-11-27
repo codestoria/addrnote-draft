@@ -11,7 +11,7 @@ class DivideByZeroException : public std::runtime_error {
 
 class NegativeValueException : public std::runtime_error {
   public:
-    NegativeValueException() : std::runtime_error{"one of your parameters is negative"} {}
+    NegativeValueException() : std::runtime_error{"One of your parameters is negative"} {}
 };
 
 double calculate_mpg(int miles, int gallons) {
