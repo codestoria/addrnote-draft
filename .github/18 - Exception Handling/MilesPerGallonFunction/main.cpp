@@ -6,6 +6,7 @@
 double calculate_mpg(int miles, int gallons) {
     if (gallons == 0)
         throw 0;
+
     return static_cast<double>(miles) / gallons;
 }
 

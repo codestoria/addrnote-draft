@@ -6,7 +6,6 @@
 #include <vector>
 
 int main() {
-
     try {
         for (int i = 0; i < 100; i++)
             std::string *s = new std::string[9999999];
@@ -15,6 +14,7 @@ int main() {
     }
 
     std::vector<int> vec{1, 2, 3, 4, 5};
+
     try {
         std::cout << vec.at(10);
     } catch (const std::out_of_range &ex) {
@@ -22,5 +22,6 @@ int main() {
     }
 
     std::cout << "Bye" << std::endl;
+
     return 0;
 }

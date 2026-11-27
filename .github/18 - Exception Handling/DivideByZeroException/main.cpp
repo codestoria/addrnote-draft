@@ -16,6 +16,7 @@ int main() {
     try {
         if (gallons == 0)
             throw 0;
+
         miles_per_gallon = static_cast<double>(miles) / gallons;
         std::cout << "Result: " << miles_per_gallon << std::endl;
     } catch (int &ex) {

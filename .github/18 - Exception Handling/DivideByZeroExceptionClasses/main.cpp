@@ -9,6 +9,7 @@ class NegativeValueException {};
 double calculate_mpg(int miles, int gallons) {
     if (gallons == 0)
         throw DivideByZeroException();
+
     if (miles < 0 || gallons < 0)
         throw NegativeValueException();
 
