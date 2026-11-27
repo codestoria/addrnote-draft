@@ -1,7 +1,7 @@
 // Section 13 Challenge Solution: a movie and its attributes.
 
-#ifndef _MOVIE_H_
-#define _MOVIE_H_
+#ifndef SECTION13_CHALLENGESOLUTION_MOVIE_H
+#define SECTION13_CHALLENGESOLUTION_MOVIE_H
 
 #include <string>
 
@@ -38,4 +38,4 @@ public:
     void display() const;
 };
 
-#endif  // _MOVIE_H_
+#endif  // SECTION13_CHALLENGESOLUTION_MOVIE_H

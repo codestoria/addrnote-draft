@@ -1,5 +1,5 @@
-#ifndef _FRIEND_CLASS_H_
-#define _FRIEND_CLASS_H_
+#ifndef SECTION13_FRIENDS_FRIEND_CLASS_H
+#define SECTION13_FRIENDS_FRIEND_CLASS_H
 
 #include <string>
 #include "Player.h"
@@ -10,4 +10,4 @@ public:
     void display_player(Player &p);
 };
 
-#endif  // _FRIEND_CLASS_H_
+#endif  // SECTION13_FRIENDS_FRIEND_CLASS_H

@@ -1,5 +1,5 @@
-#ifndef _ACCOUNT_H_
-#define _ACCOUNT_H_
+#ifndef SECTION13_IMPLEMENTINGMETHODS2_ACCOUNT_H
+#define SECTION13_IMPLEMENTINGMETHODS2_ACCOUNT_H
 
 #include <string>
 
@@ -7,7 +7,7 @@ class Account {
 private:
     // Attributes.
     std::string name;
-    double balance;
+    double balance{0.0};
 
 public:
     // Methods.
@@ -23,4 +23,4 @@ public:
     bool withdraw(double amount);
 };
 
-#endif  // _ACCOUNT_H_
+#endif  // SECTION13_IMPLEMENTINGMETHODS2_ACCOUNT_H

@@ -1,7 +1,7 @@
 // Section 13 Challenge Solution: a collection of movies.
 
-#ifndef _MOVIES_H_
-#define _MOVIES_H_
+#ifndef SECTION13_CHALLENGESOLUTION_MOVIES_H
+#define SECTION13_CHALLENGESOLUTION_MOVIES_H
 
 #include <vector>
 #include <string>
@@ -25,4 +25,4 @@ public:
     void display() const;
 };
 
-#endif  // _MOVIES_H_
+#endif  // SECTION13_CHALLENGESOLUTION_MOVIES_H

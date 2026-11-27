@@ -10,7 +10,7 @@ class Account {
 private:
     // Attributes.
     string name;
-    double balance;
+    double balance{0.0};
 
 public:
     // Methods.
@@ -35,13 +35,14 @@ string Account::get_name() {
 }
 
 bool Account::deposit(double amount) {
-    // Add the amount without validation.
+    if (amount < 0)
+        return false;
     balance += amount;
     return true;
 }
 
 bool Account::withdraw(double amount) {
-    if (balance - amount >= 0) {
+    if (amount >= 0 && balance >= amount) {
         balance -= amount;
         return true;
     } else {

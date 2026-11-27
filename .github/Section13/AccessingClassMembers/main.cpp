@@ -28,11 +28,13 @@ public:
     bool deposit(double bal) {
         balance += bal;
         cout << "In deposit" << endl;
+        return true;
     }
 
     bool withdraw(double bal) {
         balance -= bal;
         cout << "In withdraw" << endl;
+        return true;
     }
 };
 
@@ -55,6 +57,7 @@ int main() {
     (*enemy).health = 100;
     enemy->xp = 15;
     enemy->talk("I will destroy you!");
+    delete enemy;
 
     return 0;
 }

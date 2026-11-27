@@ -2,6 +2,7 @@
 // Move Constructor
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 
 using namespace std;
@@ -11,8 +12,14 @@ private:
     int *data;
 
 public:
-    void set_data_value(int d) { *data = d; }
-    int get_data_value() { return *data; }
+    void set_data_value(int d) {
+        if (data) *data = d;
+        else data = new int{d};
+    }
+    int get_data_value() const {
+        if (!data) throw std::logic_error{"Move object has no value"};
+        return *data;
+    }
 
     // Constructor
     Move(int d);
@@ -22,6 +29,10 @@ public:
 
     // Move Constructor
     Move(Move &&source) noexcept;
+
+    // Assignment is outside the scope of this constructor example.
+    Move &operator=(const Move &) = delete;
+    Move &operator=(Move &&) = delete;
 
     // Destructor
     ~Move();
@@ -34,14 +45,15 @@ Move::Move(int d) {
 }
 
 // Copy constructor.
-Move::Move(const Move &source) : Move{*source.data} {
-    cout << "Copy constructor  - deep copy for: " << *data << endl;
+Move::Move(const Move &source) : data{source.data ? new int{*source.data} : nullptr} {
+    cout << "Copy constructor - deep copy" << endl;
 }
 
 // Move constructor.
 Move::Move(Move &&source) noexcept : data{source.data} {
     source.data = nullptr;
-    cout << "Move constructor - moving resource: " << *data << endl;
+    if (data) cout << "Move constructor - moving resource: " << *data << endl;
+    else cout << "Move constructor - moving an empty object" << endl;
 }
 
 Move::~Move() {

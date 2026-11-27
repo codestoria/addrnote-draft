@@ -1,5 +1,5 @@
-#ifndef _OTHER_CLASS_H_
-#define _OTHER_CLASS_H_
+#ifndef SECTION13_FRIENDS_OTHER_CLASS_H
+#define SECTION13_FRIENDS_OTHER_CLASS_H
 
 class Player;
 
@@ -8,4 +8,4 @@ public:
     void display_player(Player &p);
 };
 
-#endif  // _OTHER_CLASS_H_
+#endif  // SECTION13_FRIENDS_OTHER_CLASS_H

@@ -18,6 +18,7 @@ public:
 
     // Copy Constructor
     Deep(const Deep &source);
+    Deep &operator=(const Deep &source);
 
     // Destructor
     ~Deep();
@@ -30,6 +31,12 @@ Deep::Deep(int d) {
 
 Deep::Deep(const Deep &source) : Deep{*source.data} {
     cout << "Copy constructor  - deep copy" << endl;
+}
+
+Deep &Deep::operator=(const Deep &source) {
+    if (this != &source)
+        *data = *source.data;
+    return *this;
 }
 
 Deep::~Deep() {

@@ -16,9 +16,9 @@ public:
     void set_name(std::string name_val) { name = name_val; }
 
     // Overloaded Constructors
-    Player() { cout << "No args constructor called" << endl; }
-    Player(std::string name) { cout << "String arg constructor called" << endl; }
-    Player(std::string name, int health, int xp) {
+    Player() : name{"None"}, health{0}, xp{0} { cout << "No args constructor called" << endl; }
+    Player(std::string name) : name{name}, health{0}, xp{0} { cout << "String arg constructor called" << endl; }
+    Player(std::string name, int health, int xp) : name{name}, health{health}, xp{xp} {
         cout << "Three args constructor called" << endl;
     }
 

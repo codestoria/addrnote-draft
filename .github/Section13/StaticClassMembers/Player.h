@@ -1,5 +1,5 @@
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef SECTION13_STATICCLASSMEMBERS_PLAYER_H
+#define SECTION13_STATICCLASSMEMBERS_PLAYER_H
 
 #include <string>
 
@@ -26,4 +26,4 @@ public:
     static int get_num_players();
 };
 
-#endif  // _PLAYER_H_
+#endif  // SECTION13_STATICCLASSMEMBERS_PLAYER_H

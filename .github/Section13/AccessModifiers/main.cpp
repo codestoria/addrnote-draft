@@ -10,8 +10,8 @@ class Player {
 private:
     // Attributes.
     string name{"Player"};
-    int health;
-    int xp;
+    int health{0};
+    int xp{0};
 
 public:
     // Methods.

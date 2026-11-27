@@ -1,5 +1,5 @@
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef SECTION13_FRIENDS_PLAYER_H
+#define SECTION13_FRIENDS_PLAYER_H
 
 #include <string>
 #include "Other_class.h"
@@ -33,4 +33,4 @@ public:
     static int get_num_players();
 };
 
-#endif  // _PLAYER_H_
+#endif  // SECTION13_FRIENDS_PLAYER_H
