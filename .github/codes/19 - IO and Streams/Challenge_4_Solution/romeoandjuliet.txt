@@ -914,7 +914,7 @@ MERCUTIO	O, then, I see Queen Mab hath been with you.
 	Through lovers' brains, and then they dream of love;
 	O'er courtiers' knees, that dream on court'sies straight,
 	O'er lawyers' fingers, who straight dream on fees,
-	O'er ladies ' lips, who straight on kisses dream,
+	O'er ladies' lips, who straight on kisses dream,
 	Which oft the angry Mab with blisters plagues,
 	Because their breaths with sweetmeats tainted are:
 	Sometime she gallops o'er a courtier's nose,
@@ -1936,7 +1936,7 @@ Nurse	You say well.
 MERCUTIO	Yea, is the worst well? very well took, i' faith;
 	wisely, wisely.
 
-Nurse	if you be he, sir, I desire some confidence with
+Nurse	If you be he, sir, I desire some confidence with
 	you.
 
 BENVOLIO	She will indite him to some supper.
@@ -2418,7 +2418,7 @@ MERCUTIO	Ay, ay, a scratch, a scratch; marry, 'tis enough.
 ROMEO	Courage, man; the hurt cannot be much.
 
 MERCUTIO	No, 'tis not so deep as a well, nor so wide as a
-	church-door; but 'tis enough,'twill serve: ask for
+	church-door; but 'tis enough, 'twill serve: ask for
 	me to-morrow, and you shall find me a grave man. I
 	am peppered, I warrant, for this world. A plague o'
 	both your houses! 'Zounds, a dog, a rat, a mouse, a
@@ -2821,7 +2821,7 @@ ROMEO	'Tis torture, and not mercy: heaven is here,
 	Live here in heaven and may look on her;
 	But Romeo may not: more validity,
 	More honourable state, more courtship lives
-	In carrion-flies than Romeo: they my seize
+	In carrion-flies than Romeo: they may seize
 	On the white wonder of dear Juliet's hand
 	And steal immortal blessing from her lips,
 	Who even in pure and vestal modesty,
@@ -2964,7 +2964,7 @@ FRIAR LAURENCE	Hold thy desperate hand:
 	What, rouse thee, man! thy Juliet is alive,
 	For whose dear sake thou wast but lately dead;
 	There art thou happy: Tybalt would kill thee,
-	But thou slew'st Tybalt; there are thou happy too:
+	But thou slew'st Tybalt; there art thou happy too:
 	The law that threaten'd death becomes thy friend
 	And turns it to exile; there art thou happy:
 	A pack of blessings lights up upon thy back;
@@ -3213,7 +3213,7 @@ JULIET	What villain madam?
 LADY CAPULET	That same villain, Romeo.
 
 JULIET	[Aside]  Villain and he be many miles asunder.--
-	God Pardon him! I do, with all my heart;
+	God pardon him! I do, with all my heart;
 	And yet no man like he doth grieve my heart.
 
 LADY CAPULET	That is, because the traitor murderer lives.
@@ -3626,7 +3626,7 @@ ACT IV
 SCENE II	Hall in Capulet's house.
 
 
-	[Enter CAPULET, LADY  CAPULET, Nurse, and two
+	[Enter CAPULET, LADY CAPULET, Nurse, and two
 	Servingmen]
 
 CAPULET	So many guests invite as here are writ.
@@ -3692,7 +3692,7 @@ CAPULET	Go, nurse, go with her: we'll to church to-morrow.
 
 	[Exeunt JULIET and Nurse]
 
-LADY  CAPULET	We shall be short in our provision:
+LADY CAPULET	We shall be short in our provision:
 	'Tis now near night.
 
 CAPULET	Tush, I will stir about,
@@ -3822,7 +3822,7 @@ CAPULET	Come, stir, stir, stir! the second cock hath crow'd,
 	Spare not for the cost.
 
 Nurse	Go, you cot-quean, go,
-	Get you to bed; faith, You'll be sick to-morrow
+	Get you to bed; faith, you'll be sick to-morrow
 	For this night's watching.
 
 CAPULET	No, not a whit: what! I have watch'd ere now
