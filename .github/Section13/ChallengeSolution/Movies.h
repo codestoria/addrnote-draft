@@ -1,6 +1,8 @@
 // Section 13 Challenge Solution: a collection of movies.
+
 #ifndef _MOVIES_H_
 #define _MOVIES_H_
+
 #include <vector>
 #include <string>
 #include "Movie.h"
@@ -10,8 +12,9 @@ private:
     std::vector<Movie> movies;
 
 public:
-    Movies();  // Constructor
-    ~Movies(); // Destructor
+    Movies();   // Constructor
+    ~Movies();  // Destructor
+
     // Add a movie if its name is not already present; return whether it was added.
     bool add_movie(std::string name, std::string rating, int watched);
 
@@ -22,4 +25,4 @@ public:
     void display() const;
 };
 
-#endif // _MOVIES_H_
+#endif  // _MOVIES_H_

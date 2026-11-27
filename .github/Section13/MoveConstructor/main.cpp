@@ -1,5 +1,6 @@
 // Section 13
 // Move Constructor
+
 #include <iostream>
 #include <vector>
 
@@ -12,12 +13,16 @@ private:
 public:
     void set_data_value(int d) { *data = d; }
     int get_data_value() { return *data; }
+
     // Constructor
     Move(int d);
+
     // Copy Constructor
     Move(const Move &source);
+
     // Move Constructor
     Move(Move &&source) noexcept;
+
     // Destructor
     ~Move();
 };
@@ -52,7 +57,6 @@ int main() {
     vector<Move> vec;
 
     vec.push_back(Move{10});
-
     vec.push_back(Move{20});
     vec.push_back(Move{30});
     vec.push_back(Move{40});

@@ -2,6 +2,7 @@
 #include "Friend_class.h"
 
 class Player;
+
 void Friend_class::set_hero_name(Player &p, std::string name) {
     p.name = name;
 }

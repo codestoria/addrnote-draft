@@ -8,4 +8,4 @@ public:
     void display_player(Player &p);
 };
 
-#endif // _OTHER_CLASS_H_
+#endif  // _OTHER_CLASS_H_

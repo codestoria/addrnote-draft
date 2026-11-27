@@ -1,4 +1,5 @@
 // Section 13 Challenge Solution: a movie and its attributes.
+
 #ifndef _MOVIE_H_
 #define _MOVIE_H_
 
@@ -6,9 +7,10 @@
 
 class Movie {
 private:
-    std::string name;   // Movie name.
-    std::string rating; // Movie rating.
-    int watched;        // Number of times watched.
+    std::string name;    // Movie name.
+    std::string rating;  // Movie rating.
+    int watched;         // Number of times watched.
+
 public:
     // Initialize all three movie attributes.
     Movie(std::string name, std::string rating, int watched);
@@ -36,4 +38,4 @@ public:
     void display() const;
 };
 
-#endif // _MOVIE_H_
+#endif  // _MOVIE_H_

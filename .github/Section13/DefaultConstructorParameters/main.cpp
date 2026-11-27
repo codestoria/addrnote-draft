@@ -1,5 +1,6 @@
 // Section 13
 // Default Constructor Parameters
+
 #include <iostream>
 #include <string>
 
@@ -13,7 +14,7 @@ private:
 
 public:
     Player(std::string name_val = "None", int health_val = 0, int xp_val = 0);
-    //  Player() {}    // A second default constructor would make default construction ambiguous.
+    //  Player() {}  // A second default constructor would make default construction ambiguous.
 };
 
 Player::Player(std::string name_val, int health_val, int xp_val)
@@ -22,7 +23,6 @@ Player::Player(std::string name_val, int health_val, int xp_val)
 }
 
 int main() {
-
     Player empty;
     Player frank{"Frank"};
     Player hero{"Hero", 100};

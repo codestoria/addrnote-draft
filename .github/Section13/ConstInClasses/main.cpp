@@ -1,5 +1,6 @@
 // Section 13
 // Const in Classes
+
 #include <iostream>
 #include <string>
 
@@ -12,10 +13,12 @@ private:
     int xp;
 
 public:
-    std::string get_name() const { // This method can be called on a const object.
+    std::string get_name() const {  // This method can be called on a const object.
         return name;
     }
+
     void set_name(std::string name_val) { name = name_val; }
+
     // Overloaded Constructors
     Player();
     Player(std::string name_val);
@@ -34,7 +37,6 @@ void display_player_name(const Player &p) {
 }
 
 int main() {
-
     const Player villain{"Villain", 100, 55};
     Player hero{"Hero", 100, 15};
 

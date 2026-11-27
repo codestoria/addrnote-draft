@@ -1,5 +1,6 @@
 // Section 13
 // Copy Constructor
+
 #include <iostream>
 #include <string>
 
@@ -15,9 +16,12 @@ public:
     std::string get_name() { return name; }
     int get_health() { return health; }
     int get_xp() { return xp; }
+
     Player(std::string name_val = "None", int health_val = 0, int xp_val = 0);
+
     // Copy constructor
     Player(const Player &source);
+
     // Destructor
     ~Player() { cout << "Destructor called for: " << name << endl; }
 };
@@ -41,7 +45,6 @@ void display_player(Player p) {
 
 int main() {
     Player empty{"XXXXXX", 100, 50};
-
     Player my_new_object{empty};
 
     display_player(empty);

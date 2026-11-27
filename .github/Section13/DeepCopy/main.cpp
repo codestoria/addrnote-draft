@@ -1,5 +1,6 @@
 // Section 13
 // Copy Constructor - Deep Copy
+
 #include <iostream>
 
 using namespace std;
@@ -11,10 +12,13 @@ private:
 public:
     void set_data_value(int d) { *data = d; }
     int get_data_value() { return *data; }
+
     // Constructor
     Deep(int d);
+
     // Copy Constructor
     Deep(const Deep &source);
+
     // Destructor
     ~Deep();
 };
@@ -38,12 +42,10 @@ void display_deep(Deep s) {
 }
 
 int main() {
-
     Deep obj1{100};
     display_deep(obj1);
 
     Deep obj2{obj1};
-
     obj2.set_data_value(1000);
 
     return 0;

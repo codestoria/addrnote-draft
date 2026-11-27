@@ -1,4 +1,5 @@
 // Section 13 Challenge Solution: a collection of movies.
+
 #include <iostream>
 #include "Movies.h"
 
@@ -14,8 +15,10 @@ bool Movies::add_movie(std::string name, std::string rating, int watched) {
         if (movie.get_name() == name)
             return false;
     }
+
     Movie temp{name, rating, watched};
     movies.push_back(temp);
+
     return true;
 }
 
@@ -27,6 +30,7 @@ bool Movies::increment_watched(std::string name) {
             return true;
         }
     }
+
     return false;
 }
 

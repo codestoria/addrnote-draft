@@ -1,5 +1,6 @@
 // Section 13
 // Delegating Constructors
+
 #include <iostream>
 #include <string>
 
@@ -32,7 +33,6 @@ Player::Player(std::string name_val, int health_val, int xp_val)
 }
 
 int main() {
-
     Player empty;
     Player frank{"Frank"};
     Player villain{"Villain", 100, 55};

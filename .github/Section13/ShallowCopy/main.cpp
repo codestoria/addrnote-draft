@@ -1,6 +1,7 @@
 // Section 13
 // Copy Constructor - Shallow Copy
 // The shallow copy causes double deletion and undefined behavior.
+
 #include <iostream>
 
 using namespace std;
@@ -12,10 +13,13 @@ private:
 public:
     void set_data_value(int d) { *data = d; }
     int get_data_value() { return *data; }
+
     // Constructor
     Shallow(int d);
+
     // Copy Constructor
     Shallow(const Shallow &source);
+
     // Destructor
     ~Shallow();
 };
@@ -39,7 +43,6 @@ void display_shallow(Shallow s) {
 }
 
 int main() {
-
     Shallow obj1{100};
     display_shallow(obj1);
 

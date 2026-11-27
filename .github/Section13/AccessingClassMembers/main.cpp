@@ -1,5 +1,6 @@
 // Section 13
 // Accessing Class Members
+
 #include <iostream>
 #include <string>
 
@@ -28,6 +29,7 @@ public:
         balance += bal;
         cout << "In deposit" << endl;
     }
+
     bool withdraw(double bal) {
         balance -= bal;
         cout << "In withdraw" << endl;
@@ -52,7 +54,6 @@ int main() {
     (*enemy).name = "Enemy";
     (*enemy).health = 100;
     enemy->xp = 15;
-
     enemy->talk("I will destroy you!");
 
     return 0;

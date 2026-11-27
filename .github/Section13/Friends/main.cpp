@@ -13,7 +13,6 @@ void display_player(Player &p) {
 using namespace std;
 
 int main() {
-
     Player hero{"Hero", 100, 35};
     display_player(hero);
 
