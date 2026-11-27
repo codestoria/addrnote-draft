@@ -69,7 +69,7 @@ void increment_watched(Movies &movies, std::string name);
 void add_movie(Movies &movies, std::string name, std::string rating, int watched);
 
 /******************************************************************
- * increment_watched expects a reference to a Movies object 
+ * increment_watched expects a reference to a Movies object
  * and the name of the movie to increment the watched count
  *
  * If the watched count was incremented successfully it
