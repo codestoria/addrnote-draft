@@ -7,6 +7,7 @@ class DivideByZeroException : public std::runtime_error {
   public:
     DivideByZeroException() : std::runtime_error{"Cannot divide by zero"} {}
 };
+
 class NegativeValueException : public std::runtime_error {
   public:
     NegativeValueException() : std::runtime_error{"one of your parameters is negative"} {}
@@ -33,7 +34,6 @@ int main() {
     try {
         miles_per_gallon = calculate_mpg(miles, gallons);
         std::cout << "Result: " << miles_per_gallon << std::endl;
-
     } catch (const DivideByZeroException &ex) {
         std::cerr << ex.what() << std::endl;
     } catch (const NegativeValueException &ex) {
