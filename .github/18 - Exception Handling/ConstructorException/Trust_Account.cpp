@@ -3,7 +3,6 @@
 Trust_Account::Trust_Account(std::string name, double balance, double int_rate)
     : Savings_Account{name, balance, int_rate}, num_withdrawals{0} {}
 
-// Add a $50 bonus to deposits of at least $5,000 before applying interest.
 bool Trust_Account::deposit(double amount) {
     if (amount >= bonus_threshold)
         amount += bonus_amount;

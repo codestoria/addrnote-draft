@@ -3,9 +3,11 @@
 Savings_Account::Savings_Account(std::string name, double balance, double int_rate)
     : Account{name, balance}, int_rate{int_rate} {}
 
-// Add interest to the requested amount before depositing it.
+// Reject negative amounts before calculating and adding interest.
 bool Savings_Account::deposit(double amount) {
-    amount += amount * (int_rate / 100);
+    if (amount < 0.0)
+        return false;
+    amount += amount * (int_rate / 100.0);
     return Account::deposit(amount);
 }
 

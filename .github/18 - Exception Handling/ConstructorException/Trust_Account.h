@@ -20,10 +20,10 @@ class Trust_Account : public Savings_Account {
     Trust_Account(std::string name = def_name, double balance = def_balance,
                   double int_rate = def_int_rate);
 
-    // Add a $50 bonus to deposits of at least $5,000 before applying interest.
+    // Adds a fixed bonus when deposit meets the threshold, then applies savings interest.
     virtual bool deposit(double amount) override;
 
-    // Allow at most three withdrawals per account, each at most 20% of current balance.
+    // Enforces withdrawal count and per-withdrawal balance percentage limits.
     virtual bool withdraw(double amount) override;
     virtual void print(std::ostream &os) const override;
 
