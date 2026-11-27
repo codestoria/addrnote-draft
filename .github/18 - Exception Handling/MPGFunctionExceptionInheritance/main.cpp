@@ -2,6 +2,7 @@
 // Miles per Gallon - Function - Exception Classes - Inheritance
 
 #include <iostream>
+#include <stdexcept>
 
 class DivideByZeroException : public std::runtime_error {
   public:

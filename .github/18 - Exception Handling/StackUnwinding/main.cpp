@@ -20,7 +20,7 @@ void func_b() {
 
     try {
         func_c();
-    } catch (int &ex) {
+    } catch (const int &ex) {
         std::cout << "Caught error in func_b" << std::endl;
     }
 
@@ -40,7 +40,7 @@ int main() {
 
     try {
         func_a();
-    } catch (int &ex) {
+    } catch (const int &ex) {
         std::cout << "Caught error in main" << std::endl;
     }
 

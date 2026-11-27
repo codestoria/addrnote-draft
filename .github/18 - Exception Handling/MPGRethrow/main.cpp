@@ -2,7 +2,7 @@
 // Miles per Gallon - Function - Rethrow
 
 #include <iostream>
-#include <vector>
+#include <string>
 
 int main() {
     int miles{};
@@ -18,7 +18,7 @@ int main() {
         if (gallons == 0)
             throw gallons;
         else if (miles < 0 || gallons < 0)
-            throw "You can have negative miles or gallons";
+            throw "You can't have negative miles or gallons";
         else if (gallons > 1000)
             throw std::string{"Huh"};
 
