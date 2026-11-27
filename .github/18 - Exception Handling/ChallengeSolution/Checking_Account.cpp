@@ -3,6 +3,8 @@
 Checking_Account::Checking_Account(std::string name, double balance) : Account{name, balance} {}
 
 bool Checking_Account::withdraw(double amount) {
+    if (amount <= 0)
+        return false;
     amount += per_check_fee;
     return Account::withdraw(amount);
 }

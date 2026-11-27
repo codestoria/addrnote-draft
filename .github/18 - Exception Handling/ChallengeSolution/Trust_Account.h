@@ -1,5 +1,5 @@
-#ifndef _TRUST_ACCOUNT_H_
-#define _TRUST_ACCOUNT_H_
+#ifndef TRUST_ACCOUNT_H
+#define TRUST_ACCOUNT_H
 
 #include "Savings_Account.h"
 
@@ -23,12 +23,11 @@ class Trust_Account : public Savings_Account {
     // Add a $50 bonus to deposits of at least $5,000 before applying interest.
     virtual bool deposit(double amount) override;
 
-    // Reject attempts after three counted attempts or above 20% of the balance.
-    // Count eligible attempts before the base class processes them.
+    // Allow up to three successful withdrawals, each at most 20% of the balance.
     virtual bool withdraw(double amount) override;
     virtual void print(std::ostream &os) const override;
 
     virtual ~Trust_Account() = default;
 };
 
-#endif // _TRUST_ACCOUNT_H_
+#endif // TRUST_ACCOUNT_H

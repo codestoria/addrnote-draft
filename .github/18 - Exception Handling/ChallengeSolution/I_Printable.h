@@ -1,5 +1,5 @@
-#ifndef _I_PRINTABLE_H_
-#define _I_PRINTABLE_H_
+#ifndef I_PRINTABLE_H
+#define I_PRINTABLE_H
 #include <iostream>
 
 class I_Printable {
@@ -10,4 +10,4 @@ class I_Printable {
     virtual ~I_Printable() = default;
 };
 
-#endif // _I_PRINTABLE_H_
+#endif // I_PRINTABLE_H

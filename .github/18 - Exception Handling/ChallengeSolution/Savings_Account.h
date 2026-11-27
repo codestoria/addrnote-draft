@@ -1,5 +1,5 @@
-#ifndef _SAVINGS_ACCOUNT_H_
-#define _SAVINGS_ACCOUNT_H_
+#ifndef SAVINGS_ACCOUNT_H
+#define SAVINGS_ACCOUNT_H
 #include "Account.h"
 
 class Savings_Account : public Account {
@@ -21,4 +21,4 @@ class Savings_Account : public Account {
     virtual ~Savings_Account() = default;
 };
 
-#endif // _SAVINGS_ACCOUNT_H_
+#endif // SAVINGS_ACCOUNT_H

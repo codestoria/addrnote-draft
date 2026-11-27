@@ -1,6 +1,6 @@
 // A simple account.
-#ifndef _ACCOUNT_H_
-#define _ACCOUNT_H_
+#ifndef ACCOUNT_H
+#define ACCOUNT_H
 #include <iostream>
 #include <string>
 #include "I_Printable.h"
