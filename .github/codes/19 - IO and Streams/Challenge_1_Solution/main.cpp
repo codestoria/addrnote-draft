@@ -43,7 +43,7 @@ int main() {
             },
             {
                 "Brazil", {
-                    { "Rio De Janiero", 13500000, 567.45 },
+                    { "Rio de Janiero", 13500000, 567.45 },
                     { "Sao Paulo", 11310000, 975.45 },
                     { "Salvador", 18234000, 855.99 }
                 },
@@ -62,7 +62,7 @@ int main() {
         }
     };
 
-    const int total_width   {70};
+    const int total_width  {70};
     const int field1_width {20};  // Country name
     const int field2_width {20};  // City name
     const int field3_width {15};  // Population
