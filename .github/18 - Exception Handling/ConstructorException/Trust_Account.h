@@ -23,8 +23,7 @@ class Trust_Account : public Savings_Account {
     // Add a $50 bonus to deposits of at least $5,000 before applying interest.
     virtual bool deposit(double amount) override;
 
-    // Reject attempts after three counted attempts or above 20% of the balance.
-    // Count eligible attempts before the base class processes them.
+    // Allow at most three withdrawals per account, each at most 20% of current balance.
     virtual bool withdraw(double amount) override;
     virtual void print(std::ostream &os) const override;
 

@@ -1,17 +1,18 @@
 #ifndef _ACCOUNT_UTIL_H_
 #define _ACCOUNT_UTIL_H_
 
+#include <memory>
 #include <vector>
 #include "Account.h"
 #include "Savings_Account.h"
 #include "Checking_Account.h"
 #include "Trust_Account.h"
 
-// Utility functions for Account accounts.
+// Utility functions for polymorphic Account pointers.
 
-void display(const std::vector<Account> &accounts);
-void deposit(std::vector<Account> &accounts, double amount);
-void withdraw(std::vector<Account> &accounts, double amount);
+void display(const std::vector<std::unique_ptr<Account>> &accounts);
+void deposit(std::vector<std::unique_ptr<Account>> &accounts, double amount);
+void withdraw(std::vector<std::unique_ptr<Account>> &accounts, double amount);
 
 // Utility functions for Savings Account accounts.
 

@@ -1,5 +1,5 @@
-#ifndef __ILLEGAL_BALANCE_EXCEPTION_H__
-#define __ILLEGAL_BALANCE_EXCEPTION_H__
+#ifndef ILLEGAL_BALANCE_EXCEPTION_H
+#define ILLEGAL_BALANCE_EXCEPTION_H
 
 class IllegalBalanceException {
   public:
@@ -7,4 +7,4 @@ class IllegalBalanceException {
     ~IllegalBalanceException() = default;
 };
 
-#endif  // __ILLEGAL_BALANCE_EXCEPTION_H__
+#endif  // ILLEGAL_BALANCE_EXCEPTION_H

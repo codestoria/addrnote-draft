@@ -27,4 +27,4 @@ class Account : public I_Printable {
     virtual ~Account() = default;
 };
 
-#endif
+#endif  // _ACCOUNT_H_

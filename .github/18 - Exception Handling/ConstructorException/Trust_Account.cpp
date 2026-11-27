@@ -10,15 +10,15 @@ bool Trust_Account::deposit(double amount) {
     return Savings_Account::deposit(amount);
 }
 
-// Reject attempts after three counted attempts or above 20% of the balance.
-// Count eligible attempts before the base class processes them.
 bool Trust_Account::withdraw(double amount) {
-    if (num_withdrawals >= max_withdrawals || (amount > balance * max_withdraw_percent))
+    if (amount <= 0.0 || num_withdrawals >= max_withdrawals ||
+        amount > balance * max_withdraw_percent)
         return false;
-    else {
+    if (Savings_Account::withdraw(amount)) {
         ++num_withdrawals;
-        return Savings_Account::withdraw(amount);
+        return true;
     }
+    return false;
 }
 
 void Trust_Account::print(std::ostream &os) const {
