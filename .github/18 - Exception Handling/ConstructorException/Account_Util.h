@@ -1,5 +1,5 @@
-#ifndef _ACCOUNT_UTIL_H_
-#define _ACCOUNT_UTIL_H_
+#ifndef ACCOUNT_UTIL_H
+#define ACCOUNT_UTIL_H
 
 #include <memory>
 #include <vector>

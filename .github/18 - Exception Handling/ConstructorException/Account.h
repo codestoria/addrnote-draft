@@ -1,7 +1,7 @@
 // A simple account.
 
-#ifndef _ACCOUNT_H_
-#define _ACCOUNT_H_
+#ifndef ACCOUNT_H
+#define ACCOUNT_H
 
 #include <iostream>
 #include <string>
@@ -27,4 +27,4 @@ class Account : public I_Printable {
     virtual ~Account() = default;
 };
 
-#endif  // _ACCOUNT_H_
+#endif  // ACCOUNT_H

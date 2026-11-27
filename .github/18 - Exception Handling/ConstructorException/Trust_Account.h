@@ -1,5 +1,5 @@
-#ifndef _TRUST_ACCOUNT_H_
-#define _TRUST_ACCOUNT_H_
+#ifndef TRUST_ACCOUNT_H
+#define TRUST_ACCOUNT_H
 
 #include "Savings_Account.h"
 
@@ -30,4 +30,4 @@ class Trust_Account : public Savings_Account {
     virtual ~Trust_Account() = default;
 };
 
-#endif  // _TRUST_ACCOUNT_H_
+#endif  // TRUST_ACCOUNT_H

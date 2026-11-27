@@ -1,5 +1,5 @@
-#ifndef _CHECKING_ACCOUNT_H_
-#define _CHECKING_ACCOUNT_H_
+#ifndef CHECKING_ACCOUNT_H
+#define CHECKING_ACCOUNT_H
 
 #include <iostream>
 #include <string>
@@ -21,4 +21,4 @@ class Checking_Account : public Account {
     virtual ~Checking_Account() = default;
 };
 
-#endif  // _CHECKING_ACCOUNT_H_
+#endif  // CHECKING_ACCOUNT_H
