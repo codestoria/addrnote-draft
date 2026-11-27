@@ -8,8 +8,8 @@
 #include <string>
 
 int main() {
-    std::ifstream in_file{"romeoandjuliet.txt"};
-    std::ofstream out_file{"romeoandjuliet_out.txt"};
+    std::ifstream in_file {"romeoandjuliet.txt"};
+    std::ofstream out_file {"romeoandjuliet_out.txt"};
 
     if (!in_file.is_open()) {
         std::cerr << "Error opening input file\n";
@@ -21,8 +21,8 @@ int main() {
         return 1;
     }
 
-    std::string line{};
-    int line_number{0};
+    std::string line {};
+    int line_number {0};
     while (std::getline(in_file, line)) {
         if (line.empty()) {
             out_file << '\n';
