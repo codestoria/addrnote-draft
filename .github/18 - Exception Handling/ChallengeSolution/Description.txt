@@ -14,7 +14,7 @@ What I would like you to do is:
    balance.
 
 2. Derive InsufficientFundsException from std::exception and implement the what() method to provide an exception message.
-   This exception object should be thrown if a withdraw results in a negative balance.
+   This exception object should be thrown if a withdrawal results in a negative balance.
    You should throw this exception object from the Account withdraw method.
 
 That's it - good luck!
