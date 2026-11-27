@@ -27,7 +27,7 @@ int main() {
         std::cout << "Result: " << miles_per_gallon << std::endl;
     } catch (const int &ex) {
         std::cerr << "Tried to divide by zero" << std::endl;
-    } catch (std::string &ex) {
+    } catch (const std::string &ex) {
         std::cerr << ex << std::endl;
     }
 
