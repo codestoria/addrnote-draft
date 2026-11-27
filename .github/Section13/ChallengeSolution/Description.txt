@@ -57,10 +57,10 @@ main.cpp
 /******************************************************************
  * Section 13 Challenge
  * main.cpp
- * 
+ *
  * Test the Movies project
- * 
- * ***************************************************************/
+ *
+ *****************************************************************/
 #include <iostream>
 #include "Movies.h"
 
@@ -99,7 +99,7 @@ void add_movie(Movies &movies, std::string name, std::string rating, int watched
     if (movies.add_movie(name,rating,watched)) {
         std::cout << name << " added" << std::endl;
     } else {
-        std::cout << name << " already exists" <<  std::endl;
+        std::cout << name << " already exists" << std::endl;
     }
 }
 
