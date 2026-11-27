@@ -1,16 +1,15 @@
 // Section 18
 // Miles per Gallon - Function - Exception Classes - Inheritance
+
 #include <iostream>
 
-class DivideByZeroException : public std::runtime_error  {
-public:
-    DivideByZeroException() : std::runtime_error {"Cannot divide by zero"}
-    {}
+class DivideByZeroException : public std::runtime_error {
+  public:
+    DivideByZeroException() : std::runtime_error{"Cannot divide by zero"} {}
 };
 class NegativeValueException : public std::runtime_error {
-public:
-    NegativeValueException() : std::runtime_error {"one of your parameters is negative"}
-    {}
+  public:
+    NegativeValueException() : std::runtime_error{"one of your parameters is negative"} {}
 };
 
 double calculate_mpg(int miles, int gallons) {
@@ -21,16 +20,16 @@ double calculate_mpg(int miles, int gallons) {
     return static_cast<double>(miles) / gallons;
 }
 
-int main() {    
-    int miles {};
-    int gallons {};
-    double miles_per_gallon {};   
-    
+int main() {
+    int miles{};
+    int gallons{};
+    double miles_per_gallon{};
+
     std::cout << "Enter the miles: ";
     std::cin >> miles;
     std::cout << "Enter the gallons: ";
     std::cin >> gallons;
-    
+
     try {
         miles_per_gallon = calculate_mpg(miles, gallons);
         std::cout << "Result: " << miles_per_gallon << std::endl;
@@ -40,8 +39,8 @@ int main() {
     } catch (const NegativeValueException &ex) {
         std::cerr << ex.what() << std::endl;
     }
+
     std::cout << "Bye" << std::endl;
 
     return 0;
 }
-

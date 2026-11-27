@@ -4,7 +4,7 @@
 #include "Savings_Account.h"
 
 class Trust_Account : public Savings_Account {
-private:
+  private:
     static constexpr const char *def_name = "Unnamed Trust Account";
     static constexpr double def_balance = 0.0;
     static constexpr double def_int_rate = 0.0;
@@ -12,15 +12,19 @@ private:
     static constexpr double bonus_threshold = 5000.0;
     static constexpr int max_withdrawals = 3;
     static constexpr double max_withdraw_percent = 0.2;
-protected:
+
+  protected:
     int num_withdrawals;
-public:
-    Trust_Account(std::string name = def_name,  double balance = def_balance, double int_rate = def_int_rate);
-    
-    // Deposits of $5000.00 or more will receive $50 bonus
+
+  public:
+    Trust_Account(std::string name = def_name, double balance = def_balance,
+                  double int_rate = def_int_rate);
+
+    // Add a $50 bonus to deposits of at least $5,000 before applying interest.
     virtual bool deposit(double amount) override;
-    
-    // Only allowed maximum of 3 withdrawals, each can be up to a maximum of 20% of the account's value
+
+    // Reject attempts after three counted attempts or above 20% of the balance.
+    // Count eligible attempts before the base class processes them.
     virtual bool withdraw(double amount) override;
     virtual void print(std::ostream &os) const override;
 

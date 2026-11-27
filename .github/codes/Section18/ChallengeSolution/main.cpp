@@ -14,9 +14,7 @@ int main() {
     try {
         larrys_account = std::make_unique<Savings_Account>("Larry", -2000.0);
         std::cout << *larrys_account << std::endl;
-    }
-    catch (const IllegalBalanceException &ex)
-    {
+    } catch (const IllegalBalanceException &ex) {
         std::cerr << ex.what() << std::endl;
     }
 
@@ -27,16 +25,12 @@ int main() {
         std::cout << *moes_account << std::endl;
         moes_account->withdraw(1000.0);
         std::cout << *moes_account << std::endl;
-        
-    }
-    catch (const IllegalBalanceException &ex)
-    {
+
+    } catch (const IllegalBalanceException &ex) {
         std::cerr << ex.what() << std::endl;
-    }
-    catch (const InsufficientFundsException &ex) {
+    } catch (const InsufficientFundsException &ex) {
         std::cerr << ex.what() << std::endl;
     }
     std::cout << "Program completed successfully" << std::endl;
     return 0;
 }
-

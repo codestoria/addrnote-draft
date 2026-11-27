@@ -6,24 +6,24 @@
 #include "Checking_Account.h"
 #include "Trust_Account.h"
 
-// Utility helper functions for Account class
+// Utility functions for Account accounts.
 
 void display(const std::vector<Account> &accounts);
 void deposit(std::vector<Account> &accounts, double amount);
 void withdraw(std::vector<Account> &accounts, double amount);
 
-// Utility helper functions for Savings Account class
+// Utility functions for Savings Account accounts.
 
 void display(const std::vector<Savings_Account> &accounts);
 void deposit(std::vector<Savings_Account> &accounts, double amount);
 void withdraw(std::vector<Savings_Account> &accounts, double amount);
 
-// Utility helper functions for Checking Account class
+// Utility functions for Checking Account accounts.
 void display(const std::vector<Checking_Account> &accounts);
 void deposit(std::vector<Checking_Account> &accounts, double amount);
 void withdraw(std::vector<Checking_Account> &accounts, double amount);
 
-// Utility helper functions for Trust Account class
+// Utility functions for Trust Account accounts.
 void display(const std::vector<Trust_Account> &accounts);
 void deposit(std::vector<Trust_Account> &accounts, double amount);
 void withdraw(std::vector<Trust_Account> &accounts, double amount);
