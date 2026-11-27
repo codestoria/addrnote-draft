@@ -8,12 +8,7 @@
 
 // Return true if word_to_find exists inside the target string
 bool find_substring(const std::string &word_to_find, const std::string &target) {
-    std::size_t found = target.find(word_to_find);
-    if (found == std::string::npos) {
-        return false;
-    } else {
-        return true;
-    }
+    return target.find(word_to_find) != std::string::npos;
 }
 
 int main() {
@@ -36,7 +31,6 @@ int main() {
         ++word_count;
         if (find_substring(word_to_find, word_read)) {
             ++match_count;
-            std::cout << word_read << " ";
         }
     }
 
