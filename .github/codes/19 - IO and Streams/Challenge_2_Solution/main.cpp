@@ -17,12 +17,12 @@ int process_response(const std::string &response, const std::string &answer_key)
 void print_header() {
     std::cout << std::setw(25) << std::left << "Student"
               << std::setw(5) << std::right << "Score" << std::endl;
-    std::cout << std::setw(30) << std::setfill('-') << "" << std::endl;
+    std::cout << std::setw(28) << std::setfill('-') << "" << std::endl;
     std::cout << std::setfill(' ');
 }
 
 void print_footer(double average) {
-    std::cout << std::setw(30) << std::setfill('-') << "" << '\n';
+    std::cout << std::setw(27) << std::setfill('-') << "" << '\n';
     std::cout << std::setfill(' ');
     std::cout << std::setw(25) << std::left << "Average score"
               << std::setw(5) << std::right << average << '\n';
@@ -60,6 +60,7 @@ int main() {
         return 1;
     }
 
+    // Assumes formatted input where student names and responses contain no spaces
     in_file >> answer_key;
 
     print_header();
@@ -84,3 +85,4 @@ int main() {
     }
 
     return 0;
+}
