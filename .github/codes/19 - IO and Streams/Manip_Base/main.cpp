@@ -37,6 +37,10 @@ int main() {
     std::cout.setf(std::ios::showbase);
     std::cout.setf(std::ios::uppercase);
     std::cout.setf(std::ios::showpos);
+    std::cout << "\n--- setf flags active ---\n"
+              << std::dec << num << " | "
+              << std::hex << num << " | "
+              << std::oct << num << std::endl;
 
     // Reset format flags back to default state
     std::cout << std::resetiosflags(std::ios::basefield);
@@ -57,7 +61,7 @@ int main() {
 
     std::cout << "Octal            : " << std::oct << num << std::endl;
     std::cout << "Hexadecimal      : " << std::hex << std::showbase << num << std::endl;
-    std::cout << "Octal            : " << std::oct << num << std::endl;
+    std::cout << "Octal            : " << std::oct << std::noshowbase << num << std::endl;
 
     std::cout << std::endl << std::endl;
     return 0;

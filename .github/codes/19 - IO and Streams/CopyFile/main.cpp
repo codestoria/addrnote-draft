@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 
 int main() {
     std::ifstream in_file {"../poem.txt"};
