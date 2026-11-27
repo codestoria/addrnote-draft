@@ -80,9 +80,9 @@ void add_movie(Movies &movies, std::string name, std::string rating, int watched
 
 void increment_watched(Movies &movies, std::string name) {
     if (movies.increment_watched(name)) {
-        std::cout << name << " watch incremented" <<  std::endl;
+        std::cout << name << " watch incremented" << std::endl;
     } else {
-        std::cout << name << " not found" <<  std::endl;
+        std::cout << name << " not found" << std::endl;
     }
 }
 
