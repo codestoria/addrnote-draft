@@ -15,7 +15,7 @@ int main() {
         return 1;
     }
 
-    std::string line{};
+    std::string line {};
     while (std::getline(in_file, line)) {
         std::cout << line << std::endl;
     }
